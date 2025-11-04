@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, forwardRef } from "react";
 import styles from "./styles.module.css";
-import { paginateOneColumn } from "./pagination";
 import Header from "./sections/basics/Header";
 import buildSectionMap from "./sections/sectionMap";
+import SkillSection from "./sections/skill/SkillSection";
+import { paginateModern } from "./pagination";
 
 function setForwardedRef(ref, value) {
   if (!ref) return;
@@ -27,7 +28,7 @@ function ModernTemplateInner({
 
   useEffect(() => {
     if (!sourceRef.current || !pagesRef.current) return;
-    paginateOneColumn(sourceRef.current, pagesRef.current, styles);
+    paginateModern(sourceRef.current, pagesRef.current, styles);
   }, [resume]);
 
   return (
@@ -46,22 +47,49 @@ function ModernTemplateInner({
         ref={sourceRef}
         style={{ display: "none" }}
       >
-        {resume?.basics && (
-          <Header basics={resume.basics} templateName="Classic" headerDisplayType="left" />
-        )}
-        {(() => {
-          const sectionMap = buildSectionMap(resume);
-          return (
-            resume?.sections?.map((section) => {
-              const sectionName = section.title;
-              const sectionComponent = sectionMap[sectionName];
+        <div
+          className={styles.layout}
+        >
+          <div id="cv-left" className={styles.leftSide}>
+            {resume?.basics && (
+              <Header basics={resume.basics} headerDisplayType="left" />
+            )}
+
+            {/* {(() => {
+              const skillsSection = resume?.sections?.find((s) => s.kind === "skills");
+              if (!skillsSection) return null;
+              const sectionMap = buildSectionMap(resume);
+              const skillComponent = sectionMap["Skills"];
               return (
-                sectionComponent &&
-                React.cloneElement(sectionComponent, { key: section.id || section.title })
+                skillComponent &&
+                React.cloneElement(skillComponent, { key: skillsSection.id || "skills" })
               );
-            })
-          );
-        })()}
+            })()} */}
+
+            <SkillSection skills={resume?.sections?.find(s => s.kind === "skills")?.items || []} />
+          </div>
+
+          <div id="cv-right" className={styles.rightSide}>
+            {(() => {
+              const sectionMap = buildSectionMap(resume);
+              return (
+                resume?.sections
+                  ?.filter((section) => section.kind !== "skills")
+                  .map((section) => {
+                    const sectionName = section.title;
+                    const sectionComponent = sectionMap[sectionName];
+                    return (
+                      sectionComponent && (
+                        <div className="block" key={section.id || section.title}>
+                          {React.cloneElement(sectionComponent)}
+                        </div>
+                      )
+                    );
+                  })
+              );
+            })()}
+          </div>
+        </div>
       </div>
       <div
         ref={(n) => { pagesRef.current = n; setForwardedRef(ref, n); }}

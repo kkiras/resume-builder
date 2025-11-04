@@ -1,5 +1,12 @@
+.container {
+    /* font-size: 14px; */
+}
+
 .title {
-    font-size: var(--title-font-size, 26px) !important;
+    /* font-size: var(--title-font-size, 26px) !important; */
+    font-size: 18px;
+    line-height: 1;
+    padding: 4px 0px;
 }
 
 .sectionLine {
@@ -10,10 +17,13 @@
 }
 
 .itemDetailContent{
-    margin-top: 8px;
+    margin-top: 0px;
     margin-bottom: 24px;
-    font-size: var(--content-font-size);
-    line-height: var(--line-height, 1.5);
+    /* font-size: var(--content-font-size);
+    line-height: var(--line-height, 1.5); */
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    padding: 0;
 }
 
 .itemDetailContent > li{

@@ -19,7 +19,7 @@
 .page {
     width: 210mm;
     min-height: 297mm;
-    padding: 12mm;
+    /* padding: 12mm; */
     box-sizing: border-box;
     background-color: #fff;
     border: 1px solid #e5e7eb;
@@ -49,6 +49,11 @@
   overflow: visible;
 }
 
+/* rightSide equals main for pagination engine compatibility */
+.rightSide {
+  overflow: visible;
+}
+
 .block {
     break-inside: avoid;
     margin-bottom: 12px;
@@ -71,20 +76,17 @@
   }
 }
 
-/* Two-column internals for Modern */
-.columns {
-  display: grid;
-  grid-template-columns: 35% 65%;
-  gap: 10mm;
-  height: 100%;
-}
-
-.sidebar {
+.layout {
   display: flex;
-  flex-direction: column;
-  gap: 8mm;
 }
 
-.main {
-  display: block;
+.leftSide {
+  width: 74mm;
+  /* height: 100%; */
+  padding: 10mm;
+  background-color: gray;
+}
+
+.rightSide {
+  flex: 1;
 }

@@ -269,6 +269,7 @@ export default function ResumeEditor() {
                                 lineHeight={lineHeight}
                                 subTitleFontSize={subTitleFontSize}
                                 isBgForPageScroll={true}
+                                templateName={"Modern"}
                             />
                             
                         </div>

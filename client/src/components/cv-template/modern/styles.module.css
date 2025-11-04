@@ -33,9 +33,26 @@
 
 }
 
+.columns {
+  display: grid;
+  grid-template-columns: 30% 1fr;
+  gap: 12px;
+}
+
+.sidebar {
+  background: #0f1c2e; /* ví dụ */
+  color: white;
+  padding: 10px;
+}
+
+.main {
+  overflow: visible;
+}
+
 .block {
     break-inside: avoid;
-  page-break-inside: avoid;
+    margin-bottom: 12px;
+    /* page-break-inside: avoid; */
 }
 
 @media print {

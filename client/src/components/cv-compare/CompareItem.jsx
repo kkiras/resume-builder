@@ -1,5 +1,5 @@
 import styles from "./CompareItem.module.css"
-import Resume from "../cv-edit/Resume"
+import Resume from "../cv-edit/resume/Resume"
 import CVContext from "../cv-edit/CVContext"
 
 export default function CompareItem({ data, bgColor }) {

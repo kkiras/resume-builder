@@ -62,4 +62,3 @@ function ModernTemplateInner({
 }
 
 export default forwardRef(ModernTemplateInner);
-

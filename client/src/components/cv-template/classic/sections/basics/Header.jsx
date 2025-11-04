@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { LocationIcon, CalendarIcon, MailIcon, PhoneIcon } from "../../../../libs/icons";
+import { LocationIcon, CalendarIcon, MailIcon, PhoneIcon } from "../../../../../libs/icons";
 import modernStyles from "./styles.modern.module.css";
 
 export default function Header({ basics, headerDisplayType, templateName, region }) {

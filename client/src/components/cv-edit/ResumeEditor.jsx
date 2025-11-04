@@ -1,5 +1,5 @@
 import Card from "../ui/Card"
-import Resume from "./Resume"
+import Resume from "./resume/Resume"
 import { useState, useRef, useEffect, useMemo } from "react"
 import SectionDetail from "./SectionDetail"
 import SectionList from "./list/SectionList"

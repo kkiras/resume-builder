@@ -1,0 +1,66 @@
+*{
+    box-sizing: border-box;
+}
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg);
+}
+
+.card {
+    width: 500px;
+    height: fit-content;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background-color: white;
+    border-radius: 24px;
+    color: black;
+}
+
+.card h3{
+
+}
+
+.inputField {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.buttonField{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.buttonField > Button{
+    background-color: var(--primary);
+    color: #fff;
+}
+
+.buttonField > Button:hover{
+    background-color: color-mix(in oklab, var(--primary) 90%, transparent);
+    color: #fff;
+}
+
+.subButton {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+
+.subButtonContent {
+    color: var(--text-foreground);
+    cursor: pointer;
+}
+
+.subButtonContent:hover {
+    color: color-mix(in oklab, var(--text-foreground) 90%, transparent)
+}
+

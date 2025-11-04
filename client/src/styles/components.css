@@ -1,0 +1,156 @@
+/* .rs-picker-popup {
+    z-index: 2000 !important;
+} */
+ *{
+    box-sizing: border-box;
+ }
+.container{
+    /* display: flex;
+    flex-direction: column; */
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.cv-btn-group{
+    position: fixed;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    height: 8vh;
+    width: 100%;
+    background-color: #ffffff;
+    top: 0;
+    left: 0;
+    z-index: 999999;
+    border-bottom: 1px solid var(--border);
+    /* padding: 12px; */
+    gap: 18px;
+    padding: 0 24px;
+}
+
+.cv-btn-group > Button{
+    height: 4vh;
+    width: 120px;
+}
+
+#edit-container {
+    background-color: var(--bg);
+    position: relative;
+}
+
+#split-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* #editor-container{
+    position: relative;
+} */
+#editor-field {
+    width: 100%;
+    height: 92vh;
+    margin-top: 8vh;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    display: flex;
+    justify-content: center;
+    overflow-y: scroll;
+
+}
+
+#editor-field::-webkit-scrollbar{
+    display: none;
+}
+
+#editor-field > div {
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 60%;
+}
+
+#cv-container {
+    width: 100%;
+    display: grid;
+}
+
+#cv{
+    width: 210mm;
+    height: 297mm;
+    padding: 24px;
+    background-color: var(--muted);
+    position: absolute;
+    left: -999px;
+    top: 0;
+    /* color: #313131; */
+    /* border: 1px solid black; */
+}
+
+.pages-scroll {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: grid;
+    place-items: start center;
+    /* padding: 16px;
+    margin-top: 8vh; */
+}
+
+.pages-scroll::-webkit-scrollbar{
+    display: none;
+}
+
+.pages {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10mm;
+}
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 12mm;
+    box-sizing: border-box;
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+.block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.contact > div {
+    display: flex;
+    align-items: start;
+    gap: 8px;
+}
+
+.personal img{
+    display: inline-block;
+    width: 90px;
+    height: 120px;
+    flex-shrink: 0; /* Ngăn hình ảnh bị co lại nếu không đủ chỗ */
+}
+
+.name-role h2 ,h3{
+    margin: 0 !important;
+}
+
+.name-role h2 {
+    font-size: 28px;
+    line-height: 32px;
+}
+
+.name-role h3 {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+}
+
+

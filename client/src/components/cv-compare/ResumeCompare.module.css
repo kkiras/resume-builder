@@ -1,0 +1,37 @@
+* { box-sizing: border-box; }
+
+.container {
+  height: 92vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.topbar {
+    height: 6vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 16px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+}
+.backBtn {
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.compareGrid {
+  display: grid;
+  grid-template-columns: auto auto;
+  padding: 0px;
+  
+}
+
+.empty { padding: 24px; color: var(--text-foreground); }

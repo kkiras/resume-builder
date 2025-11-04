@@ -1,0 +1,119 @@
+*{
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    /* display: flex;
+    justify-content: center; */
+    padding: 48px;
+    background-color: var(--bg);
+}
+
+.container > h2 {
+    margin-bottom: 32px;
+}
+
+.gridDisplay {
+    width: fit-content;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 24px;
+
+}
+
+.gridItem{
+    width: 280px;
+    height: 280px;
+    border-radius: 32px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 14px;
+    background-color: #ffffff;
+    position: relative;
+    transition: 
+        background-color 0.3s ease,
+        border-color 0.3s ease-in,
+        transform 0.3s ease;
+}
+
+.gridItem:hover{
+    background-color: color-mix(in oklab, var(--primary) 5%, white);
+    border-color: var(--primary);
+    transform: scale(1.03);
+    cursor: pointer;
+}
+
+.newResume{
+    justify-content: center !important;
+    align-items: center;
+    gap: 12px;
+
+}
+
+.newResume:hover{
+    border: 1px dashed var(--primary) !important;
+}
+
+.newResume > span{
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.newResume > div{
+    width: 56px;
+    height: 56px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: color-mix(in oklab, var(--primary) 30%, white);
+    border-radius: 999px;
+    /* transform: rotate(0deg);
+    transition: transform 0.3s ease; */
+}
+
+.gridItem:hover .newResume > div{
+    /* transform: rotate(180deg); */
+}
+
+.itemName{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dayRefGroup{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted-foreground);
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 12px;
+}
+
+.buttonGroup > Button {
+    background-color: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--accent-forground)
+
+}
+
+.buttonGroup > Button:hover {
+    background-color: color-mix(in oklab, var(--primary) 20%, white);
+
+}
+
+.checkboxWrap {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+}

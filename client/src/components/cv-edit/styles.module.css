@@ -1,0 +1,15 @@
+.btnNewItem {
+    margin-top: 12px;
+    background-color: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    width: 100%;
+    display: flex;
+    align-items: start;
+    gap: 8px;
+    padding: 16px !important;
+    font-size: 16px !important;
+}
+
+.btnNewItem:hover {
+    background-color: var(--accent) !important;
+}

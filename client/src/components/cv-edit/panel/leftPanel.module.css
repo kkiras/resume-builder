@@ -1,0 +1,87 @@
+.panel {
+  position: fixed;
+  inset: 0 auto 0 0;    /* top:0; right:auto; bottom:0; left:0 */
+  height: 100vh;
+  display: flex;
+  align-items: stretch;
+  z-index: 10000001;
+  will-change: transform;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.panelContent {
+  flex: 1;
+  padding: 18px;
+  overflow: auto;
+  background: var(--bg);
+}
+
+.title {
+  font-size: 20px;
+  margin: 0 0 8px 0;
+}
+
+.swatchGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 24px);
+  gap: 10px;
+}
+
+.swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.typoField {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.userInput {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toggleBtn {
+  width: 36px;
+  height: 36px;
+  align-self: center;
+  border: none;
+  border-radius: 999px;
+  transform: translateX(8px);
+  background-color: var(--primary);
+  color: #fff;
+  /* box-shadow: 0 2px 10px rgba(0,0,0,0.1); */
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+}
+
+.toggleBtn:hover{
+  background-color: color-mix(in oklab, var(--primary) 90%, transparent);;
+}
+
+.toggleIcon { 
+  display: inline-block; 
+  
+}
+
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  z-index: 1000000;
+}
+
+

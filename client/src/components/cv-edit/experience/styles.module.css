@@ -1,0 +1,21 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.expBasics {
+    display: flex;
+    /* grid-template-columns: 1fr 1fr;
+    column-gap: 12px;
+    row-gap: 8px; */
+    gap: 12px;
+}
+
+

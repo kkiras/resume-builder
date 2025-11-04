@@ -1,0 +1,38 @@
+body{
+    background-color: black;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+:root{
+    --primary: #728c8d;
+    --primary-foreground: #fff;
+    --secondary: #D1D9DA;
+    --bg: #F2FAFB;
+    --text-foreground: #49595a;
+    --muted-foreground: #49595a;
+    --destructive: #e66852;
+    --accent-forground: #162525;
+    --accent: #abc097;
+    --border: #d0dada;
+    --muted: #abc097;
+}
+
+/* .rs-btn:focus,
+.rs-btn:active,
+.rs-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  background: wheat !important; 
+  color: black !important;
+}
+
+.rs-btn {
+    background: wheat !important;
+} */
+
+.rs-picker-popup {
+    z-index: 10000002 !important;
+}

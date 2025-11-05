@@ -37,12 +37,26 @@ export default function Login() {
         try {
             const res = await axios.post('http://localhost:5000/api/auth/login', loginInfor);
             setToken(res.data.token);
+            localStorage.setItem('token', res.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
             alert('Login success')
             navigate('/dashboard/resumes')
         } catch (err) {
             alert(err.response.data.message);
         }
     };
+
+    const handleGuest = async () => {
+        try {
+            const { data } = await axios.post('http://localhost:5000/api/auth/guest');
+            localStorage.setItem('token', data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+            alert('Guest mode enabled');
+            navigate('/dashboard/resumes');
+        } catch (err) {
+            alert(err?.response?.data?.message || 'Unable to start guest session');
+        }
+    }
 
     return (
         <div className={styles.container}>
@@ -91,7 +105,7 @@ export default function Login() {
                         </div>
                         <div className={styles.subButton}>
                             <span>Or enter</span>
-                            <span className={styles.subButtonContent} >Guest mode</span>
+                            <span className={styles.subButtonContent} onClick={handleGuest}>Guest mode</span>
                         </div>
                         
                     </div>

@@ -4,6 +4,7 @@ const User = require('../model/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require("google-auth-library");
+const crypto = require('crypto');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -42,6 +43,21 @@ router.post('/login', async (req, res) => {
         res.json({ token })
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+// Issue a temporary 12h guest token
+router.post('/guest', (req, res) => {
+    try {
+        const sessionId = crypto.randomUUID();
+        const token = jwt.sign(
+            { type: 'guest', sessionId },
+            process.env.JWT_SECRET,
+            { expiresIn: '12h' }
+        );
+        return res.json({ token, expiresIn: 12 * 60 * 60 });
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
     }
 });
 

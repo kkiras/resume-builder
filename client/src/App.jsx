@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import DashBoard from './components/dashboard/DashBoard'
 import Resumes from './components/dashboard/resumes/Resumes'
 import ResumeCompare from './components/cv-compare/ResumeCompare'
+import SharedItem from './components/cv-share/SharedItem'
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
     <Router>
 
       <Routes>
+        <Route path="/shared" element={<SharedItem />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/dashboard" element={<DashBoard />} >
           <Route path="resumes" element={<Resumes />} />

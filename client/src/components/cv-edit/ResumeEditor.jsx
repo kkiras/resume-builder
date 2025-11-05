@@ -11,6 +11,7 @@ import { exportElementToPdf } from "../../utils/exportToPdf"
 import BasicsItem from "./basics/BasicsItem"
 import SkillItem from "./skills/SkillItem"
 import styles from "./styles.module.css"
+import { exportModernToPdf, printModernInBrowser } from "../../utils/exportModernToPdf";
 
 export default function ResumeEditor() {    
     const [resumeData, setResumeData] = useState(() => {
@@ -145,13 +146,15 @@ export default function ResumeEditor() {
         }
     }
 
-    const handlePrint = () => {
+    const handlePrint =  () => {
         exportElementToPdf(resumeRef.current, {
             fileName: "test-demo.pdf",
             orientation: "p",
             format: "a4",
             scale: 2,
         })
+
+        // exportModernToPdf(resumeRef.current, { fileName: "VinhTran_Resume.pdf", scale: 2 });
     }
 
     function handleAddNewSection() {
@@ -269,7 +272,7 @@ export default function ResumeEditor() {
                                 lineHeight={lineHeight}
                                 subTitleFontSize={subTitleFontSize}
                                 isBgForPageScroll={true}
-                                templateName={"Modern"}
+                                templateName={"Classic"}
                             />
                             
                         </div>

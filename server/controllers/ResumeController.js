@@ -85,33 +85,53 @@ class ResumeController {
         }
     }
 
+    // static async getResume(req, res) {
+    //     try {
+    //         // const { userId } = req.params
+    //         const userId = '68f10f356594cb494a29067e'; // ID bạn muốn thử
+    //         const userObjectId = new mongoose.Types.ObjectId(userId);
+    //         // if (mongoose.Types.ObjectId.isValid(userId)) {
+                
+    //         //     console.log(userObjectId);
+    //         // } else {
+    //         //     console.log('Invalid ObjectId');
+    //         // }
+
+    //         const resume = await Resume.findOne({ userId: userObjectId })
+
+    //         if (!resume) {
+    //             return res.status(404).json({ message: 'Not found' });
+    //         }
+
+    //         return res.status(200).json({ resume });
+
+    //     } catch (err) {
+    //         console.error('Error during resume fetching:', err);
+    //         return res.status(500).json({ message: err.message });
+    //     }
+    // }
+    
     static async getResume(req, res) {
         try {
-            // const { userId } = req.params
-            const userId = '68f10f356594cb494a29067e'; // ID bạn muốn thử
-            const userObjectId = new mongoose.Types.ObjectId(userId);
-            // if (mongoose.Types.ObjectId.isValid(userId)) {
-                
-            //     console.log(userObjectId);
-            // } else {
-            //     console.log('Invalid ObjectId');
-            // }
+            // const { id } = req.params; // nếu lấy từ URL /api/resume/:id
+            const resumeId = "68f4f57056a71e0214ca0b05"; // _id bạn muốn thử
+            const objectId = new mongoose.Types.ObjectId(resumeId);
 
-            const resume = await Resume.findOne({ userId: userObjectId })
+            // Tìm theo _id thay vì userId
+            const resume = await Resume.findById(objectId);
 
             if (!resume) {
-                return res.status(404).json({ message: 'Not found' });
+            return res.status(404).json({ message: "Resume not found" });
             }
 
             return res.status(200).json({ resume });
-
         } catch (err) {
-            console.error('Error during resume fetching:', err);
+            console.error("Error during resume fetching:", err);
             return res.status(500).json({ message: err.message });
         }
     }
 
-    static async getResumeById(req, res) {
+    static async getResumesByUserId(req, res) {
         try {
             const userId = '68f10f356594cb494a29067e';
             const userObjectId = new mongoose.Types.ObjectId(userId);

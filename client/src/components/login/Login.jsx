@@ -3,6 +3,9 @@ import styles from './styles.module.css'
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import GoogleOneTapButton from './GoogleOneTapButton'
 
 export default function Login() {
     const [state, setState] = useState('Login')
@@ -73,6 +76,7 @@ export default function Login() {
 
                     <div className={styles.buttonField} >
                         <Button onClick={handleLogin}>Login</Button>
+                        <GoogleOneTapButton />
                         <div className={styles.subButton} >
                             <span>Don't have an account?</span>
                             <span
@@ -84,6 +88,10 @@ export default function Login() {
                             >
                                 Sign up
                             </span>
+                        </div>
+                        <div className={styles.subButton}>
+                            <span>Or enter</span>
+                            <span className={styles.subButtonContent} >Guest mode</span>
                         </div>
                         
                     </div>

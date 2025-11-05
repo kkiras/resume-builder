@@ -1,0 +1,37 @@
+/* XÓA LỀ & MARGIN BOXES NGAY TRONG IFRAME Paged.js */
+@page {
+  size: A4;
+  margin: 0;                /* bỏ toàn bộ lề trang */
+  @top-left { content: none; }
+  @top-center { content: none; }
+  @top-right { content: none; }
+  @bottom-left { content: none; }
+  @bottom-center { content: none; }
+  @bottom-right { content: none; }
+}
+
+/* Ẩn phần “khung lề” do stylesheet preview của paged.css vẽ ra */
+.pagedjs_margin,
+.pagedjs_margin-top,
+.pagedjs_margin-bottom,
+.pagedjs_margin-left,
+.pagedjs_margin-right,
+.pagedjs_margin-content {
+  display: none !important;
+}
+
+/* Xóa padding/margin khung page trong preview */
+.pagedjs_page {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Nội dung trang full A4 */
+.pagedjs_area {
+  inset: 0 !important;       /* đảm bảo phủ toàn bộ trang */
+}
+
+.pagedjs_bleed {
+    display: none !important;
+}

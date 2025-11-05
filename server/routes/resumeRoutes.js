@@ -13,7 +13,7 @@ router.post('/save-resume', ResumeController.saveResume)
 // Upload avatar (data URL or remote URL); returns Cloudinary URL
 router.post('/upload-avatar', ResumeController.uploadAvatar)
 
-router.get('/get-resumes', ResumeController.getResumeById)
+router.get('/get-resumes', ResumeController.getResumesByUserId)
 
 router.post('/duplicate', ResumeController.duplicate)
 

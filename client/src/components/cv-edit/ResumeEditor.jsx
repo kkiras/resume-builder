@@ -106,6 +106,7 @@ export default function ResumeEditor() {
 
     const handleSave = async () => {
         try {
+            await ensureAuthHeader()
             let avatarSrc = resumeData?.basics?.avatar || ''
             let finalAvatarUrl = avatarSrc
 

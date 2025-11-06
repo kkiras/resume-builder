@@ -1,13 +1,12 @@
 import { useEffect, useMemo } from "react";
 import { LocationIcon, CalendarIcon, MailIcon, PhoneIcon } from "../../../../../libs/icons";
-import modernStyles from "./styles.modern.module.css";
 
 export default function Header({ basics, headerDisplayType, templateName, region }) {
   const iconSize = 18;
   const iconColor = "currentColor";
 
   useEffect(() => {
-    console.log("Header:", headerDisplayType);
+    console.log("Header Classic Section:", headerDisplayType);
   }, [headerDisplayType]);
 
   function getCVHeaderDisplayType(type) {
@@ -80,7 +79,7 @@ export default function Header({ basics, headerDisplayType, templateName, region
       case "left":
         return { ...base, width: 90, height: 120 };
       case "mid":
-        return { ...base, width: 120, height: 120 };
+        return { ...base, width: 90, height: 120 };
       case "right":
         return { ...base, width: 90, height: 120 };
       default:
@@ -89,43 +88,43 @@ export default function Header({ basics, headerDisplayType, templateName, region
   }, [headerDisplayType]);
 
   // Modern template: fixed layout, ignore headerDisplayType
-  if (templateName === 'Modern') {
-    if (region === 'sidebar') {
-      return (
-        <div className={modernStyles.modernSidebar}>
-          {basics?.avatar && (
-            <img src={basics.avatar} alt="avatar" className={modernStyles.avatar} />
-          )}
-          <div className={modernStyles.contact}>
-            <div className={modernStyles.contactItem}>
-              <MailIcon size={18} color={'currentColor'} />
-              {basics.email && <span>{basics.email}</span>}
-            </div>
-            <div className={modernStyles.contactItem}>
-              <LocationIcon size={18} color={'currentColor'} />
-              {basics.location && <span>{basics.location}</span>}
-            </div>
-            <div className={modernStyles.contactItem}>
-              <PhoneIcon size={18} color={'currentColor'} />
-              {basics.phone && <span>{basics.phone}</span>}
-            </div>
-            <div className={modernStyles.contactItem}>
-              <CalendarIcon size={18} color={'currentColor'} />
-              {basics.employ && <span>{basics.employ}</span>}
-            </div>
-          </div>
-        </div>
-      );
-    }
+  // if (templateName === 'Modern') {
+  //   if (region === 'sidebar') {
+  //     return (
+  //       <div className={modernStyles.modernSidebar}>
+  //         {basics?.avatar && (
+  //           <img src={basics.avatar} alt="avatar" className={modernStyles.avatar} />
+  //         )}
+  //         <div className={modernStyles.contact}>
+  //           <div className={modernStyles.contactItem}>
+  //             <MailIcon size={18} color={'currentColor'} />
+  //             {basics.email && <span>{basics.email}</span>}
+  //           </div>
+  //           <div className={modernStyles.contactItem}>
+  //             <LocationIcon size={18} color={'currentColor'} />
+  //             {basics.location && <span>{basics.location}</span>}
+  //           </div>
+  //           <div className={modernStyles.contactItem}>
+  //             <PhoneIcon size={18} color={'currentColor'} />
+  //             {basics.phone && <span>{basics.phone}</span>}
+  //           </div>
+  //           <div className={modernStyles.contactItem}>
+  //             <CalendarIcon size={18} color={'currentColor'} />
+  //             {basics.employ && <span>{basics.employ}</span>}
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
 
-    // main region (right): name + role
-    return (
-      <div className={modernStyles.mainHeader}>
-        <h2 className={modernStyles.name}>{basics?.name}</h2>
-        <h3 className={modernStyles.role}>{basics?.title}</h3>
-      </div>
-    );
-  }
+  //   // main region (right): name + role
+  //   return (
+  //     <div className={modernStyles.mainHeader}>
+  //       <h2 className={modernStyles.name}>{basics?.name}</h2>
+  //       <h3 className={modernStyles.role}>{basics?.title}</h3>
+  //     </div>
+  //   );
+  // }
 
   return (
     <header className="cv-header" style={headerStyle}>

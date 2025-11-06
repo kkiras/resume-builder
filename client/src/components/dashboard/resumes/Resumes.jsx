@@ -2,14 +2,21 @@ import { useEffect, useState } from "react"
 import styles from "./styles.module.css"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Button, Checkbox } from "rsuite";
+import { Button, Checkbox, Modal, Input, RadioGroup, Radio } from "rsuite";
 import { sampleResume } from "../../../data/sampleResume"
 
 export default function Resumes(){
     const [resumes, setResumes] = useState();
     const [compareMode, setCompareMode] = useState(false)
     const [selectedIds, setSelectedIds] = useState([])
-    const userId = "68f10f356594cb494a29067e"
+    const [createOpen, setCreateOpen] = useState(false)
+    const [newName, setNewName] = useState("")
+    const [template, setTemplate] = useState("classic")
+    
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if (token) axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    }, [])
 
     useEffect(()=> {
         if (!resumes) {
@@ -33,21 +40,16 @@ export default function Resumes(){
 
     },[])
 
-    const handleCreate = async () => {
+    const handleCreate = async (name = "New Resume") => {
         try {
-            const newResume = {
-                ...sampleResume,
-                userId: userId,
-                name: "ABCDEFG",
-                createdAt: Date.now,
-                updatedAt: Date.now,
-            } 
+            const newResume = { ...sampleResume, name: name || "New Resume", createdAt: Date.now(), updatedAt: Date.now() } 
             const res = await axios.post('http://localhost:5000/api/resumeRoutes/create-resume', newResume);
             alert('Create successfully!');
-            setResumes(prev => [
-                ...prev,
-                newResume
-            ])
+            const created = res?.data?.newResume || null;
+            setResumes(prev => created ? [...(prev || []), created] : prev)
+            setCreateOpen(false)
+            setNewName("")
+            setTemplate("classic")
 
         } catch (err) {
             alert(err.response.data.message)
@@ -56,20 +58,32 @@ export default function Resumes(){
 
     const duplicate = async (coppiedResume) => {
         try {
-            const newResume = {
+            const payload = {
                 ...coppiedResume,
-                userId: userId,
-                name: coppiedResume.name + '_copy',
+                name: (coppiedResume.name || 'Untitled') + '_copy',
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
             }
 
-            const res = await axios.post('http://localhost:5000/api/resumeRoutes/duplicate', newResume);
+            const res = await axios.post('http://localhost:5000/api/resumeRoutes/duplicate', payload);
             alert(res.data.message);
             setResumes(prev => [ ...prev, res.data.newResume ])
 
         } catch (err) {
             alert(err.response.data.message)
+        }
+    }
+
+    const remove = async (resume) => {
+        try {
+            const ok = window.confirm(`Delete resume "${resume.name || 'Untitled'}"?`)
+            if (!ok) return;
+            await axios.delete(`http://localhost:5000/api/resumeRoutes/${resume._id}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            setResumes(prev => (prev || []).filter(r => r._id !== resume._id))
+        } catch (err) {
+            alert(err?.response?.data?.message || 'Failed to delete')
         }
     }
 
@@ -122,7 +136,7 @@ export default function Resumes(){
             <div className={styles.gridDisplay}>
                 <div 
                     className={`${styles.gridItem} ${styles.newResume}`}
-                    onClick={handleCreate}
+                    onClick={() => setCreateOpen(true)}
                 >
                     <div>
                         {plus}
@@ -139,10 +153,43 @@ export default function Resumes(){
                             selected={selectedIds.includes(resume._id)}
                             onToggleSelect={() => toggleSelect(resume._id)}
                             onDuplicate={duplicate}
+                            onDelete={remove}
                         />
                     ))
                 )}
             </div>       
+
+            <Modal open={createOpen} onClose={() => setCreateOpen(false)} size="sm" backdrop="static">
+                <Modal.Header>
+                    <Modal.Title>Create Resume</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div>
+                            <div style={{ marginBottom: 6, fontWeight: 500 }}>Template</div>
+                            <RadioGroup name="template" value={template} onChange={setTemplate} inline>
+                                <Radio value="classic">Classic</Radio>
+                                <Radio value="modern">Modern</Radio>
+                                <Radio value="minimalist">Minimalist</Radio>
+                            </RadioGroup>
+                            <div style={{ color: 'var(--muted-foreground)', fontSize: 12, marginTop: 4 }}>
+                                Template selection is UI-only for now.
+                            </div>
+                        </div>
+
+                        <div>
+                            <div style={{ marginBottom: 6, fontWeight: 500 }}>Resume Name</div>
+                            <Input value={newName} onChange={setNewName} placeholder="e.g., Frontend Developer" />
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button appearance="primary" onClick={() => handleCreate(newName || 'Untitled')}>
+                        Create
+                    </Button>
+                    <Button onClick={() => setCreateOpen(false)}>Cancel</Button>
+                </Modal.Footer>
+            </Modal>
         </div>
         
     )
@@ -200,7 +247,7 @@ function ResumeCard({ resume, compareMode = false, selected = false, onToggleSel
                     <Button onClick={() => onDuplicate(resume)}>
                         <DuplicateIcon size={18} />
                     </Button>
-                    <Button onClick={(e) => e.stopPropagation()}>{removeSVG}</Button>
+                    <Button onClick={(e) => { e.stopPropagation(); onDelete?.(resume) }}>{removeSVG}</Button>
                 </div>
             )}
         </div>

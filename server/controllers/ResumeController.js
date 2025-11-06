@@ -13,17 +13,39 @@ cloudinary.config({
 class ResumeController {
     static async createNewResume(req, res) {
         try {
-            // const resumeData = req.body;
-            const { _id, userId, ...data } = req.body;
-            // resumeData.userId = '68f10f356594cb494a29067e'
+            const { _id, userId, ...data } = req.body; // ignore incoming userId
+            const auth = req.auth || {};
+            if (auth.type !== 'user' || !auth.userId) return res.status(401).json({ message: 'Unauthorized' });
 
-            if (!userId) return res.status(400).json({ message: "Missing UserID" });
-
-            const newResume = new Resume({ ...data, userId });
+            const newResume = new Resume({ ...data, userId: auth.userId });
             await newResume.save();
 
-            return res.status(201).json({ message: 'Created successfully!' });
+            return res.status(201).json({ message: 'Created successfully!', newResume });
         } catch (err) {
+            return res.status(500).json({ message: err.message });
+        }
+    }
+
+    static async deleteResume(req, res) {
+        try {
+            const authCtx = req.auth || {};
+            if (authCtx.type !== 'user' || !authCtx.userId) {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+
+            const { id } = req.params;
+            if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ message: 'Invalid resume id' });
+            }
+
+            const deleted = await Resume.findOneAndDelete({ _id: id, userId: authCtx.userId });
+            if (!deleted) {
+                return res.status(404).json({ message: 'Resume not found' });
+            }
+
+            return res.status(200).json({ message: 'Deleted successfully', id });
+        } catch (err) {
+            console.error('Error deleting resume:', err);
             return res.status(500).json({ message: err.message });
         }
     }
@@ -31,9 +53,10 @@ class ResumeController {
     static async duplicate(req, res) {
         try {
             const { _id, userId, ...data } = req.body; //Định nghĩa _id để loại _id cũ
-            if (!userId) return res.status(500).json({ message: "Missing UserID" });
-            
-            const newResume = new Resume({ ...data, userId });
+            const auth = req.auth || {};
+            if (auth.type !== 'user' || !auth.userId) return res.status(401).json({ message: 'Unauthorized' });
+
+            const newResume = new Resume({ ...data, userId: auth.userId });
             await newResume.save();
 
             return res.status(200).json({ 
@@ -49,6 +72,8 @@ class ResumeController {
     static async saveResume(req, res) {
         try {
             const { _id, userId, ...data } = req.body;
+            const auth = req.auth || {};
+            if (auth.type !== 'user' || !auth.userId) return res.status(401).json({ message: 'Unauthorized' });
 
             // Update existing resume by _id
             if (_id) {
@@ -56,8 +81,8 @@ class ResumeController {
                     return res.status(400).json({ message: 'Invalid resume id' });
                 }
 
-                const updated = await Resume.findByIdAndUpdate(
-                    _id,
+                const updated = await Resume.findOneAndUpdate(
+                    { _id, userId: auth.userId },
                     { ...data, updatedAt: Date.now() },
                     { new: true }
                 );
@@ -70,8 +95,7 @@ class ResumeController {
             }
 
             // Create new resume if no _id provided
-            if (!userId) return res.status(400).json({ message: 'Missing UserID' });
-            const userObjectId = new mongoose.Types.ObjectId(userId);
+            const userObjectId = new mongoose.Types.ObjectId(auth.userId);
 
             const newResume = new Resume({
                 ...data,
@@ -112,36 +136,41 @@ class ResumeController {
     //     }
     // }
     
-    static async getResume(req, res) {
-        try {
-            // const { id } = req.params; // nếu lấy từ URL /api/resume/:id
-            const resumeId = "68f4f57056a71e0214ca0b05"; // _id bạn muốn thử
-            const objectId = new mongoose.Types.ObjectId(resumeId);
+    // static async getResume(req, res) {
+    //     try {
+    //         // const { id } = req.params; // nếu lấy từ URL /api/resume/:id
+    //         const resumeId = "68f4f57056a71e0214ca0b05"; // _id bạn muốn thử
+    //         const objectId = new mongoose.Types.ObjectId(resumeId);
 
-            // Tìm theo _id thay vì userId
-            const resume = await Resume.findById(objectId);
+    //         // Tìm theo _id thay vì userId
+    //         const resume = await Resume.findById(objectId);
 
-            if (!resume) {
-            return res.status(404).json({ message: "Resume not found" });
-            }
+    //         if (!resume) {
+    //         return res.status(404).json({ message: "Resume not found" });
+    //         }
 
-            return res.status(200).json({ resume });
-        } catch (err) {
-            console.error("Error during resume fetching:", err);
-            return res.status(500).json({ message: err.message });
-        }
-    }
+    //         return res.status(200).json({ resume });
+    //     } catch (err) {
+    //         console.error("Error during resume fetching:", err);
+    //         return res.status(500).json({ message: err.message });
+    //     }
+    // }
 
     static async getResumesByUserId(req, res) {
         try {
-            const userId = '68f10f356594cb494a29067e';
-            const userObjectId = new mongoose.Types.ObjectId(userId);
+            const auth = req.auth || {};
+            if (auth.type !== 'user' || !auth.userId) return res.status(401).json({ message: 'Unauthorized' });
+            const userObjectId = new mongoose.Types.ObjectId(auth.userId);
 
             const resumes = await Resume.find({ userId: userObjectId })
                                         .sort({ createdAt: -1 });
 
             if (!resumes || resumes.length === 0) {
-                return res.status(400).json({ message: "No resume found."});
+                return res.status(200).json({
+                    resumes: [],
+                    message: "No resumes yet"
+                });
+
             }
 
             return res.status(200).json({ resumes });

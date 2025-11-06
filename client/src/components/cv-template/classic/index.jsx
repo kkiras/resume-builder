@@ -12,6 +12,7 @@ function setForwardedRef(ref, value) {
 
 function ClassicTemplateInner({
   resume,
+  headerDisplayType,
   textColor,
   contentFontSize,
   titleFontSize,
@@ -30,12 +31,16 @@ function ClassicTemplateInner({
     paginateOneColumn(sourceRef.current, pagesRef.current, styles);
   }, [resume]);
 
+  useEffect(() => {
+    console.log("Header Classic:", headerDisplayType);
+  }, [headerDisplayType]);
+
   return (
     <div
       className={styles.pagesScroll}
       style={{
         padding: comparePadding ?? 16,
-        marginTop: compareMargin === 0 ? 0 : "8vh",
+        marginTop: compareMargin === 0 ? 0 : "0vh",
         backgroundColor: isBgForPageScroll
           ? "color-mix(in oklab, var(--muted) 30%, transparent)"
           : "transparent",
@@ -47,7 +52,7 @@ function ClassicTemplateInner({
         style={{ display: "none" }}
       >
         {resume?.basics && (
-          <Header basics={resume.basics} templateName="Classic" headerDisplayType="left" />
+          <Header basics={resume.basics} templateName="Classic" headerDisplayType={headerDisplayType} />
         )}
         {(() => {
           const sectionMap = buildSectionMap(resume);

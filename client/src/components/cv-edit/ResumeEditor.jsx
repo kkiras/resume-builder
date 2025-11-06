@@ -6,7 +6,8 @@ import SectionList from "./list/SectionList"
 import CVContext from "./CVContext"
 import LeftPanel from "./panel/LeftPanel"
 import axios from "axios"
-import { Button } from "rsuite"
+import { jwtDecode } from "jwt-decode"
+import { Button, Toggle } from "rsuite"
 import { exportElementToPdf } from "../../utils/exportToPdf"
 import BasicsItem from "./basics/BasicsItem"
 import SkillItem from "./skills/SkillItem"
@@ -32,6 +33,9 @@ export default function ResumeEditor() {
     const [ titleFontSize, setTitleFontSize ] = useState('24px');
     const [ subTitleFontSize, setSubTitleFontSize ] = useState('16px');
     const [ lineHeight, setLineHeight ] = useState(1.5)
+    const [shareOpen, setShareOpen] = useState(false)
+    const [isPublic, setIsPublic] = useState(false)
+    const [shareLink, setShareLink] = useState('')
 
     // const skills = resumeData?.sections.find(section => section.id === 'skills').items
 
@@ -117,6 +121,16 @@ export default function ResumeEditor() {
                 finalAvatarUrl = uploadRes?.data?.url || ''
             }
 
+            // Attach userId when creating a new resume (server requires it)
+            let userId = undefined;
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const payload = jwtDecode(token);
+                    if (payload?.id) userId = payload.id;
+                }
+            } catch {}
+
             const resumeToSave = {
                 ...resumeData,
                 basics: {
@@ -132,6 +146,8 @@ export default function ResumeEditor() {
                     lineHeight,
                 },
                 updatedAt: Date.now(),
+                // Only needed for new resumes
+                ...(resumeData?._id ? {} : (userId ? { userId } : {})),
             }
 
             const res = await axios.post('http://localhost:5000/api/resumeRoutes/save-resume', resumeToSave)
@@ -143,6 +159,48 @@ export default function ResumeEditor() {
         } catch (err) {
             const msg = err?.response?.data?.message || err.message
             alert(msg)
+        }
+    }
+
+    async function ensureAuthHeader() {
+        const token = localStorage.getItem('token')
+        if (token) axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    }
+
+    async function handleToggleShare(checked) {
+        try {
+            if (!resumeData?._id) {
+                alert('Please save resume before sharing');
+                return;
+            }
+            await ensureAuthHeader()
+
+            if (checked) {
+                await axios.patch(`http://localhost:5000/api/resumes/${resumeData._id}/visibility`, { visibility: 'public' })
+                const { data } = await axios.post(`http://localhost:5000/api/resumes/${resumeData._id}/share/enable`)
+                const token = data?.token
+                if (token) {
+                    const url = `${window.location.origin}/shared?token=${token}`
+                    setShareLink(url)
+                }
+                setIsPublic(true)
+            } else {
+                await axios.patch(`http://localhost:5000/api/resumes/${resumeData._id}/visibility`, { visibility: 'private' })
+                setIsPublic(false)
+                setShareLink('')
+            }
+        } catch (err) {
+            alert(err?.response?.data?.message || err.message)
+        }
+    }
+
+    async function handleCopyLink() {
+        try {
+            if (!shareLink) return;
+            await navigator.clipboard.writeText(shareLink)
+            alert('Copied!')
+        } catch (e) {
+            alert('Copy failed')
         }
     }
 
@@ -192,9 +250,32 @@ export default function ResumeEditor() {
             <CVContext.Provider value={{ resumeData, setResumeData }}>
                 <div className="container">
 
-                    <div className="cv-btn-group" >
+                    <div className="cv-btn-group" style={{ display: 'flex', gap: 8, alignItems: 'center', position: 'relative' }} >
                         <Button onClick={handleSave}>Save</Button>
-                        <Button onClick={handlePrint}>Print</Button>   
+                        <Button onClick={handlePrint}>Print</Button>
+                        <Button onClick={() => setShareOpen(v => !v)}>Share CV</Button>
+
+                        {shareOpen && (
+                            <div style={{ position: 'absolute', top: '110%', right: 0, background: '#fff', border: '1px solid var(--border)', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', padding: 12, minWidth: 300, zIndex: 20 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                                    <span>Status</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{isPublic ? 'Public' : 'Private'}</span>
+                                        <Toggle checked={isPublic} onChange={(checked) => handleToggleShare(checked)} />
+                                    </div>
+                                </div>
+
+                                {isPublic && (
+                                    <div style={{ marginTop: 10 }}>
+                                        <div style={{ fontSize: 12, color: 'var(--muted-foreground)', marginBottom: 6 }}>Share Link</div>
+                                        <div style={{ display: 'flex', gap: 6 }}>
+                                            <input className="rs-input" readOnly value={shareLink} style={{ flex: 1 }} />
+                                            <Button onClick={handleCopyLink}>Copy</Button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                     
                     <div id="edit-container">

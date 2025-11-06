@@ -12,25 +12,34 @@ export default function SharedItem({ }) {
     const [resumeData, setResumeData] = useState();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const isPublic = true
+    const locationHook = useLocation();
 
     useEffect(() =>{
-        const getResume = async () => {
+        const fetchShared = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/resumeRoutes/get-resume`);
-                setResumeData(res.data.resume)
-                console.log(res.data.resume)
+                const params = new URLSearchParams(locationHook.search);
+                const token = params.get('token');
+                if (!token) {
+                    setError('Missing share token');
+                    return;
+                }
+                const res = await axios.get(`http://localhost:5000/api/shares/${encodeURIComponent(token)}`);
+                const shared = res?.data?.resume;
+                if (!shared) {
+                    setError('Resume not found or private');
+                    return;
+                }
+                setResumeData(shared);
             } catch (err) {
-                console.error("Error fetching resume:", err);
-                setError("Failed to load resume");
+                console.error("Error fetching shared resume:", err);
+                setError("This shared link is invalid or expired.");
+            } finally {
+                setLoading(false);
             }
-            // } finally {
-            //     setLoading(false);
-            // }
         }
 
-        getResume();
-    },[])
+        fetchShared();
+    }, [locationHook.search])
 
     return (
         <div className={styles.container}>
@@ -40,12 +49,13 @@ export default function SharedItem({ }) {
             </div>
 
             <div className={styles.compareGrid}>
-                {isPublic ? (
-                    <Item data={resumeData} bgColor={BG_ITEM_1} />
+                {loading ? (
+                    <div>Loading...</div>
+                ) : error ? (
+                    <h2>{error}</h2>
                 ) : (
-                    <h2>Sorry, this CV has set to private.</h2>
+                    <Item data={resumeData} bgColor={BG_ITEM_1} />
                 )}
-
             </div>
         </div>
     )

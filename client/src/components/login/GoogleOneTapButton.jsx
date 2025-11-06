@@ -3,9 +3,11 @@ import { useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Button } from "rsuite";
+import { useNavigate } from 'react-router-dom';
 
 export default function GoogleOneTapButton() {
   const initialized = useRef(false);
+  const navigate = useNavigate();
 
   const triggerOneTap = () => {
     const g = window.google?.accounts?.id;
@@ -22,7 +24,11 @@ export default function GoogleOneTapButton() {
             }); // verify ở server
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("user", JSON.stringify(response.data.user));
+            // Set default Authorization header for subsequent requests
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
             console.log("Login OK:", payload);
+            // Navigate similar to Login.jsx
+            navigate('/dashboard/resumes');
           } catch (e) {
             console.error("Xử lý token lỗi:", e);
           }

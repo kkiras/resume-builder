@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import axios from 'axios'
 import styles from './nav.module.css'
 import NotificationModal from './NotificationModal'
 
@@ -9,6 +11,11 @@ export default function Nav({ onLogout }) {
   const [selected, setSelected] = useState(null)
   const menuRef = useRef(null)
   const notifRef = useRef(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const titleMap = { profile: 'Profile', resumes: 'Resumes', compare: 'Compare' }
+  const pageKey = location.pathname.replace(/\/+$/, '').split('/').pop()
+  const pageTitle = titleMap[pageKey] || 'Dashboard'
   const [notifications, setNotifications] = useState(() => ([
     { id: '1', title: 'Resume exported', body: 'Your resume has been successfully exported to PDF.', time: new Date().toLocaleString(), read: false },
     { id: '2', title: 'New template', body: 'A new modern template is now available to try.', time: new Date(Date.now() - 3600e3).toLocaleString(), read: false },
@@ -32,9 +39,41 @@ export default function Nav({ onLogout }) {
     return () => document.removeEventListener('mousedown', handleDocClick)
   }, [notifOpen, selected])
 
+  const [avatarUrl, setAvatarUrl] = useState('')
+
+  useEffect(() => {
+    // Ensure axios has auth header if token exists
+    const token = localStorage.getItem('token')
+    if (token) axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+
+    // Prefill from localStorage (e.g., after Google login)
+    try {
+      const cached = JSON.parse(localStorage.getItem('user') || 'null')
+      if (cached?.avatar) setAvatarUrl(cached.avatar)
+    } catch {}
+
+    // Fetch latest from server
+    ;(async () => {
+      try {
+        const { data } = await axios.get('http://localhost:5000/api/users/me')
+        const url = data?.user?.avatar || ''
+        if (url) setAvatarUrl(url)
+      } catch {}
+    })()
+    // Listen for profile updates broadcast from Profile.jsx
+    function onUserUpdated(e) {
+      const next = e?.detail?.avatar || ''
+      setAvatarUrl(next)
+    }
+    window.addEventListener('user:updated', onUserUpdated)
+    return () => window.removeEventListener('user:updated', onUserUpdated)
+  }, [])
+
   return (
     <div className={styles.topbar}>
-      <div className={styles.left}>Resumes</div>
+      <button className={styles.leftLink} onClick={() => navigate('/dashboard/resumes')}>
+        Resumes
+      </button>
       <div className={styles.right}>
         <div className={styles.rightGroup}>
           <div className={styles.bellWrap} ref={notifRef}>
@@ -85,12 +124,25 @@ export default function Nav({ onLogout }) {
               aria-expanded={open}
               onClick={() => setOpen(v => !v)}
             >
-              <ProfileIcon size={28} />
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <ProfileIcon size={24} />
+              )}
             </button>
 
             {open && (
               <div className={styles.dropdown} role="menu">
-                <button className={styles.item} role="menuitem" onClick={() => setOpen(false)}>Profile</button>
+                <button
+                  className={styles.item}
+                  role="menuitem"
+                  onClick={() => {
+                    setOpen(false)
+                    navigate('/dashboard/profile')
+                  }}
+                >
+                  Profile
+                </button>
                 <button className={styles.item} role="menuitem" onClick={() => setOpen(false)}>Settings</button>
                 <button className={styles.item} role="menuitem" onClick={() => { setOpen(false); onLogout?.() }}>Log out</button>
               </div>

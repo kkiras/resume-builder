@@ -78,12 +78,13 @@ router.post("/google", async (req, res) => {
 
     if (!user) {
       // User Google lần đầu
-      user = await User.create({ email, googleId, name, picture, password: null });
+      user = await User.create({ email, googleId, name, picture, avatar: picture, password: null });
     } else if (!user.googleId) {
       // User local có cùng email → gán googleId để lần sau One Tap vẫn khớp
       user.googleId = googleId;
       if (!user.name) user.name = name;
       if (!user.picture) user.picture = picture;
+      if (!user.avatar) user.avatar = picture;
       await user.save();
     }
 
@@ -92,7 +93,7 @@ router.post("/google", async (req, res) => {
     return res.json({
       success: true,
       token: appToken,
-      user: { email: user.email, name: user.name, picture: user.picture },
+      user: { email: user.email, name: user.name, avatar: user.avatar || user.picture },
     });
   } catch (err) {
     console.error("Google Verify Error:", err);

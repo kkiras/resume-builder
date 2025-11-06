@@ -1,6 +1,7 @@
 const { default: mongoose } = require('mongoose');
 const Resume = require('../model/Resume')
 const cloudinary = require('cloudinary').v2
+const auth = require('../middlewares/auth');
 
 // Configure Cloudinary once at module load
 cloudinary.config({

@@ -60,6 +60,14 @@ const StylesSchema = new Schema({
     lineHeight: { type: Number, default: 1.5 },
 }, { _id: false });
 
+// Share schema for public/link sharing
+const ShareSchema = new Schema({
+    token: { type: String, index: true, sparse: true, unique: true },
+    enabled: { type: Boolean, default: false },
+    expiresAt: { type: Date, default: null },
+    lastRotatedAt: { type: Date, default: null },
+}, { _id: false });
+
 const ResumeSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 
@@ -71,6 +79,10 @@ const ResumeSchema = new Schema({
 
     // Persisted style settings
     styles: { type: StylesSchema, default: () => ({}) },
+
+    // Visibility: private | public | link (default private)
+    visibility: { type: String, enum: ['private', 'public', 'link'], default: 'private' },
+    share: { type: ShareSchema, default: () => ({}) },
 
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

@@ -11,6 +11,8 @@ app.use(express.json({ limit: '20mb' }));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/temp', require('./routes/temp'));
 app.use('/api/resumeRoutes', require('./routes/resumeRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api', require('./routes/share'));
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {

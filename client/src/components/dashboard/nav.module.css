@@ -20,6 +20,17 @@
   color: var(--text-foreground);
 }
 
+.leftLink {
+  font-weight: 600;
+  color: var(--text-foreground);
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.leftLink:hover { background: var(--bg); }
+
 .right {
   position: relative;
 }
@@ -183,4 +194,3 @@
   color: #555;
 }
 .modalClose:hover { background: #f5f5f5; }
-

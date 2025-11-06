@@ -13,3 +13,14 @@
 .btnNewItem:hover {
     background-color: var(--accent) !important;
 }
+
+.titleEditBtn {
+    padding: 8px !important;
+}
+
+.titleInput {
+    font-size: 24px !important;
+    font-weight: 600;
+    padding: 4px 8px !important;
+    height: auto !important;
+}

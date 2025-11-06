@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect, useContext } from "react";
 import ItemSection from "./list/ItemSection";
 import CVContext from "./CVContext";
-import { Button } from "rsuite";
+import { Button, Input } from "rsuite";
 import styles from "./styles.module.css"
 
 export default function SectionDetail({ selectedSection }) {
     const [selectedItem, setSelectedItem] = useState("")
+    const [isEditingTitle, setIsEditingTitle] = useState(false)
+    const [titleDraft, setTitleDraft] = useState(selectedSection?.title || "")
     const { resumeData, setResumeData } = useContext(CVContext)
 
     let items = []
@@ -88,17 +90,81 @@ export default function SectionDetail({ selectedSection }) {
     //     console.log("SectionDetail render count:", renderCount.current);
     // });
 
+    // Compute the current title from resumeData to stay in sync after edits
+    const currentTitle = (() => {
+        if (selectedSection.id === 'basics') return 'Basics'
+        const sec = (resumeData?.sections || []).find(s => s.id === selectedSection.id)
+        return sec?.title || selectedSection.title
+    })()
+
+    useEffect(() => {
+        setTitleDraft(selectedSection?.title || "")
+        setIsEditingTitle(false)
+    }, [selectedSection?.id])
+
+    function handleConfirmTitle() {
+        const nextTitle = (titleDraft || '').trim()
+        if (!nextTitle) {
+            setIsEditingTitle(false)
+            setTitleDraft(currentTitle)
+            return
+        }
+        setResumeData(prev => {
+            const nextSections = (prev.sections || []).map(sec =>
+                sec.id === selectedSection.id ? { ...sec, title: nextTitle } : sec
+            )
+            return { ...prev, sections: nextSections }
+        })
+        setIsEditingTitle(false)
+    }
+
     return (
-        <div>
-            <h3>{selectedSection.title}</h3>
-            
-            {selectedSection.id !== "skills" && selectedSection.id !== "basics" && (
-                <ItemSection
-                    // key={selectedItem.id}
-                    selectedSection={selectedSection.title} 
-                    initialItems={items} 
-                />
-            )}
+        <div 
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 18
+            }}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'start',
+                    gap: 18
+                }}
+            >
+                {isEditingTitle ? (
+                    <Input
+                        value={titleDraft}
+                        onChange={setTitleDraft}
+                        className={styles.titleInput}
+                    />
+                ) : (
+                    <h3>{currentTitle}</h3>
+                )}
+                {selectedSection.id !== 'basics' && (
+                    isEditingTitle ? (
+                        <Button className={styles.titleEditBtn} onClick={handleConfirmTitle}>
+                            <ConfirmIcon size={20} />
+                        </Button>
+                    ) : (
+                        <Button className={styles.titleEditBtn} onClick={() => setIsEditingTitle(true)}>
+                            <EditIcon size={20} />
+                        </Button>
+                    )
+                )}
+            </div>
+
+            <div>
+                {selectedSection.id !== "skills" && selectedSection.id !== "basics" && (
+                    <ItemSection
+                        // key={selectedItem.id}
+                        selectedSection={currentTitle} 
+                        initialItems={items} 
+                    />
+                )}
+            </div>
+
 
             <Button 
                 className={styles.btnNewItem}
@@ -138,5 +204,79 @@ function AddIcon({ size }) {
                 />{" "}
             </g>
         </svg>        
+    )
+}
+
+function EditIcon({ size }) {
+    return (
+        <svg
+            width={size}
+            height={size}
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+            <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+            <g id="SVGRepo_iconCarrier">
+                {" "}
+                <g clipPath="url(#clip0_429_11139)">
+                {" "}
+                <path
+                    d="M5 16L4 20L8 19L19.5858 7.41421C20.3668 6.63316 20.3668 5.36683 19.5858 4.58579L19.4142 4.41421C18.6332 3.63316 17.3668 3.63317 16.5858 4.41421L5 16Z"
+                    stroke="#292929"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />{" "}
+                <path
+                    d="M15 6L18 9"
+                    stroke="#292929"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />{" "}
+                <path
+                    d="M13 20H21"
+                    stroke="#292929"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />{" "}
+                </g>{" "}
+                <defs>
+                {" "}
+                <clipPath id="clip0_429_11139">
+                    {" "}
+                    <rect width={24} height={24} fill="white" />{" "}
+                </clipPath>{" "}
+                </defs>{" "}
+            </g>
+        </svg>
+    )
+}
+
+function ConfirmIcon({ size }){
+    return (
+        <svg
+            width={size}
+            height={size}
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+            <g id="SVGRepo_bgCarrier" strokeWidth={0} />
+            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
+            <g id="SVGRepo_iconCarrier">
+                {" "}
+                <path
+                d="M4.89163 13.2687L9.16582 17.5427L18.7085 8"
+                stroke="#000000"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                />{" "}
+            </g>
+        </svg>
     )
 }

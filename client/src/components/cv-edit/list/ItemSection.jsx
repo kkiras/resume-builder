@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import EducationItem from "../education/EducationItem";
 import ExperienceItem from "../experience/ExperienceItem";
 import ProjectItem from "../projects/ProjectItem";
+import NewItem from "../new-section/NewItem";
 import CVContext from "/src/components/cv-edit/CVContext";
 import styles from "./ItemSection.module.css"
 
@@ -38,7 +39,7 @@ function ItemSection({ selectedSection, initialItems }) {
       case 'Experience':
         return <ExperienceItem item={item} />
       default:
-        return <></>
+        return <NewItem item={item} />
     }
       
   }

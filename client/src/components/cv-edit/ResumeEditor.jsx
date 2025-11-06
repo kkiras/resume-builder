@@ -54,6 +54,7 @@ export default function ResumeEditor() {
         if (typeof s.titleFontSize === 'string') setTitleFontSize(s.titleFontSize);
         if (typeof s.subTitleFontSize === 'string') setSubTitleFontSize(s.subTitleFontSize);
         if (typeof s.lineHeight === 'number') setLineHeight(s.lineHeight);
+        if (typeof s.headerDisplayType === 'string') setHeaderDisplayType(s.headerDisplayType);
     }, [resumeData?.styles]);
 
     
@@ -145,6 +146,7 @@ export default function ResumeEditor() {
                     titleFontSize,
                     subTitleFontSize,
                     lineHeight,
+                    headerDisplayType,
                 },
                 updatedAt: Date.now(),
                 // Only needed for new resumes

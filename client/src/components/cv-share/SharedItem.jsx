@@ -66,7 +66,7 @@ export default function SharedItem({ }) {
 
 function Item ({ data, bgColor }) {
     const stylesData = data?.styles || {}
-    const headerDisplayType = 'left'
+    const headerDisplayType = stylesData.headerDisplayType || 'left'
     const textColor = stylesData.textColor || '#313131'
     const contentFontSize = stylesData.contentFontSize || '14px'
     const titleFontSize = stylesData.titleFontSize || '24px'

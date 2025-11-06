@@ -1,4 +1,6 @@
 const User = require('../model/User');
+const Resume = require('../model/Resume');
+const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
 
 // Configure Cloudinary once at module load
@@ -93,6 +95,25 @@ class UserController {
       });
 
       return res.status(200).json({ url: result.secure_url });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+
+  static async deleteMe(req, res) {
+    try {
+      const auth = req.auth || {};
+      if (auth.type !== 'user' || !auth.userId) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
+      const objectId = new mongoose.Types.ObjectId(auth.userId);
+
+      const user = await User.findByIdAndDelete(objectId);
+      // Idempotent: if user not found, still proceed to cleanup resumes
+      await Resume.deleteMany({ userId: objectId });
+
+      return res.status(200).json({ message: 'Account and related data deleted' });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }

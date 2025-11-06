@@ -58,6 +58,7 @@ const StylesSchema = new Schema({
     titleFontSize: { type: String, default: '24px' },
     subTitleFontSize: { type: String, default: '16px' },
     lineHeight: { type: Number, default: 1.5 },
+    headerDisplayType: { type: String, enum: ['left', 'mid', 'right'], default: 'left' },
 }, { _id: false });
 
 // Share schema for public/link sharing

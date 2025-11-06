@@ -29,7 +29,7 @@ function ClassicTemplateInner({
   useEffect(() => {
     if (!sourceRef.current || !pagesRef.current) return;
     paginateOneColumn(sourceRef.current, pagesRef.current, styles);
-  }, [resume]);
+  }, [resume, headerDisplayType]);
 
   useEffect(() => {
     console.log("Header Classic:", headerDisplayType);

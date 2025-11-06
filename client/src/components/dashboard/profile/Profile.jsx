@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import styles from './styles.module.css'
+import { Button, Modal } from 'rsuite'
+import { useNavigate } from 'react-router-dom'
 
 export default function Profile() {
+  const navigate = useNavigate()
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -13,6 +16,9 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [isGoogle, setIsGoogle] = useState(false)
   const fileInputRef = useRef(null)
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -126,6 +132,11 @@ export default function Profile() {
       <div className={styles.header}>
         <h2 className={styles.title}>Personal Information</h2>
         <p className={styles.subtitle}>Update your personal details and contact information</p>
+        <div>
+          <Button color="red" appearance="primary" onClick={handleOpen}>
+            Delete My Account & Data
+          </Button>
+        </div>
       </div>
 
       <div className={styles.content}>
@@ -207,6 +218,40 @@ export default function Profile() {
           </div>
         </form>
       </div>
+
+      <Modal backdrop="static" role="alertdialog" open={open} onClose={handleClose} size="xs">
+        <Modal.Body>
+          {/* Icon intentionally omitted to avoid extra dependency */}
+          This will permanently delete your account and all resumes. This action cannot be undone. Are you sure you want to proceed?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={async () => {
+              try {
+                await axios.delete('http://localhost:5000/api/users/me')
+                // Clear local session
+                try {
+                  localStorage.removeItem('token')
+                  localStorage.removeItem('user')
+                  localStorage.removeItem('resumeEditing')
+                  localStorage.removeItem('compareSelection')
+                } catch {}
+                handleClose()
+                navigate('/login')
+              } catch (err) {
+                alert(err?.response?.data?.message || 'Failed to delete account')
+              }
+            }}
+            appearance="primary"
+            color="red"
+          >
+            Delete
+          </Button>
+          <Button onClick={handleClose} appearance="subtle">
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }

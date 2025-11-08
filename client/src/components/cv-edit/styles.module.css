@@ -24,3 +24,14 @@
     padding: 4px 8px !important;
     height: auto !important;
 }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header > Button {
+    align-self: center;
+    width: 80px;
+    margin-left: 24px;
+}

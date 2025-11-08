@@ -52,11 +52,21 @@ class ResumeController {
 
     static async duplicate(req, res) {
         try {
-            const { _id, userId, ...data } = req.body; //Định nghĩa _id để loại _id cũ
+            const { _id, userId, share, visibility, createdAt, updatedAt, ...data } = req.body; // strip conflicting fields
             const auth = req.auth || {};
             if (auth.type !== 'user' || !auth.userId) return res.status(401).json({ message: 'Unauthorized' });
 
-            const newResume = new Resume({ ...data, userId: auth.userId });
+            // Ensure we don't carry over unique share token or sharing state
+            const cleanShare = { token: undefined, enabled: false, expiresAt: null, lastRotatedAt: null };
+
+            const newResume = new Resume({
+                ...data,
+                userId: auth.userId,
+                share: cleanShare,
+                visibility: 'private',
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+            });
             await newResume.save();
 
             return res.status(200).json({ 
@@ -65,6 +75,9 @@ class ResumeController {
             })
 
         } catch (err) {
+            if (err && err.code === 11000) {
+                return res.status(409).json({ message: 'Duplicate key detected while duplicating. Please try again.' });
+            }
             return res.status(500).json({ message: err.message })
         }
     }

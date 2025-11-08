@@ -6,16 +6,16 @@ import NewSection from "./new/NewSection";
 
 export default function buildSectionMap(resume) {
   const map = {
-    Skills: (
+    skills: (
       <SkillSection skills={resume?.sections?.find(s => s.kind === "skills")?.items || []} />
     ),
-    Education: (
+    education: (
       <EducationSection educations={resume?.sections?.find(s => s.kind === "education")?.items || []} />
     ),
-    Experience: (
+    experience: (
       <ExperienceSection experience={resume?.sections?.find(s => s.kind === "experience")?.items || []} />
     ),
-    Projects: (
+    projects: (
       <ProjectsSection projects={resume?.sections?.find(s => s.kind === "projects")?.items || []} />
     ),
   };

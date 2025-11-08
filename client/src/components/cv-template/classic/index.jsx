@@ -2,6 +2,7 @@ import React, { useEffect, useRef, forwardRef } from "react";
 import styles from "./styles.module.css";
 import { paginateOneColumn } from "./pagination";
 import Header from "./sections/basics/Header";
+import NewSection from "./sections/new/NewSection";
 import buildSectionMap from "./sections/sectionMap";
 
 function setForwardedRef(ref, value) {
@@ -58,8 +59,17 @@ function ClassicTemplateInner({
           const sectionMap = buildSectionMap(resume);
           return (
             resume?.sections?.map((section) => {
-              const sectionName = section.title;
-              const sectionComponent = sectionMap[sectionName];
+              const sectionKind = section.kind;
+              if (sectionKind === 'generic') {
+                return (
+                  <NewSection
+                    key={section.id || section.title}
+                    title={section.title}
+                    items={Array.isArray(section.items) ? section.items : []}
+                  />
+                );
+              }
+              const sectionComponent = sectionMap[sectionKind];
               return (
                 sectionComponent &&
                 React.cloneElement(sectionComponent, { key: section.id || section.title })

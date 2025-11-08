@@ -195,7 +195,7 @@ export default function Resumes(){
     )
 }
 
-function ResumeCard({ resume, compareMode = false, selected = false, onToggleSelect, onDuplicate }) {
+function ResumeCard({ resume, compareMode = false, selected = false, onToggleSelect, onDuplicate, onDelete }) {
     const { name, createdAt, updatedAt } = resume 
     const navigate = useNavigate();
 

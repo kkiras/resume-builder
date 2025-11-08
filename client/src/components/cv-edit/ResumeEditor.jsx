@@ -1,6 +1,7 @@
 import Card from "../ui/Card"
 import Resume from "./resume/Resume"
 import { useState, useRef, useEffect, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 import SectionDetail from "./SectionDetail"
 import SectionList from "./list/SectionList"
 import CVContext from "./CVContext"
@@ -15,6 +16,7 @@ import styles from "./styles.module.css"
 import { exportModernToPdf, printModernInBrowser } from "../../utils/exportModernToPdf";
 
 export default function ResumeEditor() {    
+    const navigate = useNavigate();
     const [resumeData, setResumeData] = useState(() => {
         const stored = localStorage.getItem("resumeEditing");
         console.log(stored)
@@ -253,33 +255,39 @@ export default function ResumeEditor() {
             <CVContext.Provider value={{ resumeData, setResumeData }}>
                 <div className="container">
 
-                    <div className="cv-btn-group" style={{ display: 'flex', gap: 8, alignItems: 'center', position: 'relative' }} >
-                        <Button onClick={handleSave}>Save</Button>
-                        <Button onClick={handlePrint}>Print</Button>
-                        <Button onClick={() => setShareOpen(v => !v)}>Share CV</Button>
+                    <div
+                        className={styles.header}
+                    >
+                        <Button onClick={() => navigate('/dashboard/resumes')}>Back</Button>
+                        <div className="cv-btn-group" style={{ display: 'flex', gap: 8, alignItems: 'center', position: 'relative' }} >
+                            <Button onClick={handleSave}>Save</Button>
+                            <Button onClick={handlePrint}>Print</Button>
+                            <Button onClick={() => setShareOpen(v => !v)}>Share CV</Button>
 
-                        {shareOpen && (
-                            <div style={{ position: 'absolute', top: '110%', right: 0, background: '#fff', border: '1px solid var(--border)', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', padding: 12, minWidth: 300, zIndex: 20 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                                    <span>Status</span>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                        <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{isPublic ? 'Public' : 'Private'}</span>
-                                        <Toggle checked={isPublic} onChange={(checked) => handleToggleShare(checked)} />
-                                    </div>
-                                </div>
-
-                                {isPublic && (
-                                    <div style={{ marginTop: 10 }}>
-                                        <div style={{ fontSize: 12, color: 'var(--muted-foreground)', marginBottom: 6 }}>Share Link</div>
-                                        <div style={{ display: 'flex', gap: 6 }}>
-                                            <input className="rs-input" readOnly value={shareLink} style={{ flex: 1 }} />
-                                            <Button onClick={handleCopyLink}>Copy</Button>
+                            {shareOpen && (
+                                <div style={{ position: 'absolute', top: '110%', right: 0, background: '#fff', border: '1px solid var(--border)', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', padding: 12, minWidth: 300, zIndex: 20 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                                        <span>Status</span>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                            <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{isPublic ? 'Public' : 'Private'}</span>
+                                            <Toggle checked={isPublic} onChange={(checked) => handleToggleShare(checked)} />
                                         </div>
                                     </div>
-                                )}
-                            </div>
-                        )}
+
+                                    {isPublic && (
+                                        <div style={{ marginTop: 10 }}>
+                                            <div style={{ fontSize: 12, color: 'var(--muted-foreground)', marginBottom: 6 }}>Share Link</div>
+                                            <div style={{ display: 'flex', gap: 6 }}>
+                                                <input className="rs-input" readOnly value={shareLink} style={{ flex: 1 }} />
+                                                <Button onClick={handleCopyLink}>Copy</Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
+
                     
                     <div id="edit-container">
                             <LeftPanel 

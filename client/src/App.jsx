@@ -1,6 +1,7 @@
 import './styles/components.css'
 import ResumeEditor from './components/cv-edit/ResumeEditor'
 import Login from './components/login/Login'
+import ResetPassword from './components/login/ResetPassword'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import DashBoard from './components/dashboard/DashBoard'
 import Resumes from './components/dashboard/resumes/Resumes'
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/shared" element={<SharedItem />} /> 
         <Route path="/login" element={<Login />} /> 
+        <Route path="/reset-password" element={<ResetPassword />} /> 
         <Route path="/dashboard" element={<DashBoard />} >
           <Route path="resumes" element={<Resumes />} />
           <Route path="compare" element={<ResumeCompare />} />

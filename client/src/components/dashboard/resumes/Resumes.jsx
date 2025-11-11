@@ -6,6 +6,7 @@ import { Button, Checkbox, Modal, Input, RadioGroup, Radio } from "rsuite";
 import { sampleResume } from "../../../data/sampleResume"
 import API_BASE_URL from "../../../utils/apiBase"
 import { createGuestResumeId, isGuestSession, loadGuestResumes, saveGuestResumes } from "../../../utils/session"
+// import ModernSample from "../../../../public/modern_sample.png"
 
 export default function Resumes(){
     const [guestSession] = useState(() => isGuestSession())
@@ -197,7 +198,7 @@ export default function Resumes(){
                 )}
             </div>       
 
-            <Modal open={createOpen} onClose={() => setCreateOpen(false)} size="sm" backdrop="static">
+            <Modal open={createOpen} onClose={() => setCreateOpen(false)} size="md" backdrop="static">
                 <Modal.Header>
                     <Modal.Title>Create Resume</Modal.Title>
                 </Modal.Header>
@@ -206,11 +207,28 @@ export default function Resumes(){
                         <div>
                             <div style={{ marginBottom: 6, fontWeight: 500 }}>Template</div>
                             <RadioGroup name="template" value={template} onChange={setTemplate} inline>
-                                <Radio value="classic">Classic</Radio>
-                                <Radio value="modern">Modern</Radio>
-                                <Radio value="minimalist">Minimalist</Radio>
+                                <Radio value="classic" className={styles.option} >
+                                    <div className={styles.absoluteOption} >
+                                        <img src="/classic_sample.png" alt="" />
+                                        <span>Classic</span>
+                                    </div>
+
+                                </Radio>
+                                <Radio value="modern" className={styles.option} >
+                                    <div className={styles.absoluteOption} >
+                                        <img src="/modern_sample.png" alt="" />
+                                        <span> Modern</span>
+                                    </div>
+                                   
+                                </Radio>
+                                <Radio value="minimalist" className={styles.option} >
+                                    <div className={styles.absoluteOption} >
+                                        <span>Minimalist</span>
+                                    </div>
+                                    
+                                </Radio>
                             </RadioGroup>
-                            <div style={{ color: 'var(--muted-foreground)', fontSize: 12, marginTop: 4 }}>
+                            <div style={{ color: 'var(--muted-foreground)', fontSize: 12, marginTop: 12 }}>
                                 Template selection is UI-only for now.
                             </div>
                         </div>

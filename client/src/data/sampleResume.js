@@ -1,4 +1,5 @@
 export const sampleResume = {
+  // template: "Classic",
   basics: {
     avatar: "",
     name: "Vinh Tran",

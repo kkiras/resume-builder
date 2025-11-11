@@ -17,6 +17,13 @@ import { exportModernToPdf, printModernInBrowser } from "../../utils/exportModer
 import API_BASE_URL from "../../utils/apiBase";
 import { createGuestResumeId, isGuestSession, upsertGuestResume } from "../../utils/session";
 
+function formatTemplateName(value) {
+    if (typeof value !== 'string') return 'Classic';
+    const trimmed = value.trim();
+    if (!trimmed) return 'Classic';
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+}
+
 export default function ResumeEditor() {    
     const navigate = useNavigate();
     const [resumeData, setResumeData] = useState(() => {
@@ -32,6 +39,7 @@ export default function ResumeEditor() {
         resumeData?.sections?.map(s => ({ id: s.id, title: s.title })) ?? []
     ), [resumeData]);
     const isGuest = useMemo(() => isGuestSession(), [])
+    const templateName = useMemo(() => formatTemplateName(resumeData?.template), [resumeData?.template])
 
     const [ textColor, setTextColor ] = useState('#313131');
     const [ contentFontSize, setContentFontSize ] = useState('14px');
@@ -361,7 +369,7 @@ export default function ResumeEditor() {
                                 lineHeight={lineHeight}
                                 subTitleFontSize={subTitleFontSize}
                                 isBgForPageScroll={true}
-                                templateName={"Classic"}
+                                templateName={templateName}
                             />
                             
                         </div>

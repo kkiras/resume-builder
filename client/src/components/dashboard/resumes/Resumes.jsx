@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import styles from "./styles.module.css"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,13 @@ export default function Resumes(){
     const [selectedIds, setSelectedIds] = useState([])
     const [createOpen, setCreateOpen] = useState(false)
     const [newName, setNewName] = useState("")
-    const [template, setTemplate] = useState("classic")
+    const [template, setTemplate] = useState("Classic")
+    const normalizedTemplate = useMemo(() => {
+        if (!template) return "Classic";
+        const trimmed = template.trim();
+        if (!trimmed) return "Classic";
+        return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+    }, [template])
     
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -55,23 +61,30 @@ export default function Resumes(){
                     _id: createGuestResumeId(),
                     name: name || "New Resume", 
                     createdAt: Date.now(), 
-                    updatedAt: Date.now() 
+                    updatedAt: Date.now(),
+                    template: normalizedTemplate,
                 };
                 setResumes(prev => ([...(prev || []), localResume]));
                 alert('Created locally in guest mode.');
                 setCreateOpen(false)
                 setNewName("")
-                setTemplate("classic")
+                setTemplate("Classic")
                 return;
             }
-            const newResume = { ...sampleResume, name: name || "New Resume", createdAt: Date.now(), updatedAt: Date.now() } 
+            const newResume = { 
+                ...sampleResume, 
+                name: name || "New Resume", 
+                createdAt: Date.now(), 
+                updatedAt: Date.now(),
+                template: normalizedTemplate,
+            } 
             const res = await axios.post(`${API_BASE_URL}/api/resumeRoutes/create-resume`, newResume);
             alert('Create successfully!');
             const created = res?.data?.newResume || null;
             setResumes(prev => created ? [...(prev || []), created] : prev)
             setCreateOpen(false)
             setNewName("")
-            setTemplate("classic")
+            setTemplate("Classic")
 
         } catch (err) {
             alert(err.response.data.message)
@@ -87,6 +100,7 @@ export default function Resumes(){
                     name: (coppiedResume.name || 'Untitled') + '_copy',
                     createdAt: Date.now(),
                     updatedAt: Date.now(),
+                    template: coppiedResume.template || "Classic",
                 }
                 setResumes(prev => ([...(prev || []), payload]));
                 alert('Duplicated locally in guest mode.');
@@ -207,21 +221,21 @@ export default function Resumes(){
                         <div>
                             <div style={{ marginBottom: 6, fontWeight: 500 }}>Template</div>
                             <RadioGroup name="template" value={template} onChange={setTemplate} inline>
-                                <Radio value="classic" className={styles.option} >
+                                <Radio value="Classic" className={styles.option} >
                                     <div className={styles.absoluteOption} >
                                         <img src="/classic_sample.png" alt="" />
                                         <span>Classic</span>
                                     </div>
 
                                 </Radio>
-                                <Radio value="modern" className={styles.option} >
+                                <Radio value="Modern" className={styles.option} >
                                     <div className={styles.absoluteOption} >
                                         <img src="/modern_sample.png" alt="" />
                                         <span> Modern</span>
                                     </div>
                                    
                                 </Radio>
-                                <Radio value="minimalist" className={styles.option} >
+                                <Radio value="Minimalist" className={styles.option} >
                                     <div className={styles.absoluteOption} >
                                         <span>Minimalist</span>
                                     </div>
@@ -229,7 +243,7 @@ export default function Resumes(){
                                 </Radio>
                             </RadioGroup>
                             <div style={{ color: 'var(--muted-foreground)', fontSize: 12, marginTop: 12 }}>
-                                Template selection is UI-only for now.
+                                Template applies to the resume layout in the editor.
                             </div>
                         </div>
 

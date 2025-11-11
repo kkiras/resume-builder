@@ -74,6 +74,8 @@ const ResumeSchema = new Schema({
 
     name: { type: String, required: false, default: '' },
 
+    template: { type: String, enum: ['Classic', 'Modern', 'Minimalist'], default: 'Classic' },
+
     basics: BasicSchema,
 
     sections: [SectionSchema],

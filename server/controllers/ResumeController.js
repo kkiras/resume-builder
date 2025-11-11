@@ -10,14 +10,27 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
+const templateMap = new Map([
+    ['classic', 'Classic'],
+    ['modern', 'Modern'],
+    ['minimalist', 'Minimalist'],
+]);
+
+function normalizeTemplate(value) {
+    if (typeof value !== 'string') return 'Classic';
+    const key = value.trim().toLowerCase();
+    return templateMap.get(key) || 'Classic';
+}
+
 class ResumeController {
     static async createNewResume(req, res) {
         try {
-            const { _id, userId, ...data } = req.body; // ignore incoming userId
+            const { _id, userId, template, ...data } = req.body; // ignore incoming userId
             const auth = req.auth || {};
             if (auth.type !== 'user' || !auth.userId) return res.status(401).json({ message: 'Unauthorized' });
 
-            const newResume = new Resume({ ...data, userId: auth.userId });
+            const normalizedTemplate = normalizeTemplate(template);
+            const newResume = new Resume({ ...data, template: normalizedTemplate, userId: auth.userId });
             await newResume.save();
 
             return res.status(201).json({ message: 'Created successfully!', newResume });
@@ -52,16 +65,18 @@ class ResumeController {
 
     static async duplicate(req, res) {
         try {
-            const { _id, userId, share, visibility, createdAt, updatedAt, ...data } = req.body; // strip conflicting fields
+            const { _id, userId, share, visibility, createdAt, updatedAt, template, ...data } = req.body; // strip conflicting fields
             const auth = req.auth || {};
             if (auth.type !== 'user' || !auth.userId) return res.status(401).json({ message: 'Unauthorized' });
 
             // Ensure we don't carry over unique share token or sharing state
             const cleanShare = { token: undefined, enabled: false, expiresAt: null, lastRotatedAt: null };
+            const normalizedTemplate = normalizeTemplate(template);
 
             const newResume = new Resume({
                 ...data,
                 userId: auth.userId,
+                template: normalizedTemplate,
                 share: cleanShare,
                 visibility: 'private',
                 createdAt: Date.now(),
@@ -84,9 +99,10 @@ class ResumeController {
 
     static async saveResume(req, res) {
         try {
-            const { _id, userId, ...data } = req.body;
+            const { _id, userId, template, ...data } = req.body;
             const auth = req.auth || {};
             if (auth.type !== 'user' || !auth.userId) return res.status(401).json({ message: 'Unauthorized' });
+            const normalizedTemplate = typeof template === 'undefined' ? undefined : normalizeTemplate(template);
 
             // Update existing resume by _id
             if (_id) {
@@ -94,9 +110,14 @@ class ResumeController {
                     return res.status(400).json({ message: 'Invalid resume id' });
                 }
 
+                const updatePayload = { ...data, updatedAt: Date.now() };
+                if (typeof normalizedTemplate !== 'undefined') {
+                    updatePayload.template = normalizedTemplate;
+                }
+
                 const updated = await Resume.findOneAndUpdate(
                     { _id, userId: auth.userId },
-                    { ...data, updatedAt: Date.now() },
+                    updatePayload,
                     { new: true }
                 );
 
@@ -112,6 +133,7 @@ class ResumeController {
 
             const newResume = new Resume({
                 ...data,
+                template: normalizeTemplate(template),
                 userId: userObjectId,
             });
             await newResume.save();

@@ -4,6 +4,7 @@ import Resume from "../cv-edit/resume/Resume"
 import CVContext from "../cv-edit/CVContext"
 import { useEffect, useState } from "react"
 import axios from "axios"
+import API_BASE_URL from "../../utils/apiBase"
 
 export default function SharedItem({ }) {
     const BG_ITEM_1 = 'var(--bg)'
@@ -23,7 +24,7 @@ export default function SharedItem({ }) {
                     setError('Missing share token');
                     return;
                 }
-                const res = await axios.get(`http://localhost:5000/api/shares/${encodeURIComponent(token)}`);
+                const res = await axios.get(`${API_BASE_URL}/api/shares/${encodeURIComponent(token)}`);
                 const shared = res?.data?.resume;
                 if (!shared) {
                     setError('Resume not found or private');

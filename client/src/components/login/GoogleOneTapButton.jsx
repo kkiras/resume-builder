@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Button } from "rsuite";
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from "../../utils/apiBase";
 
 export default function GoogleOneTapButton() {
   const initialized = useRef(false);
@@ -19,7 +20,7 @@ export default function GoogleOneTapButton() {
         callback: async (res) => {
           try {
             const payload = jwtDecode(res.credential);     // thông tin user
-            const response = await axios.post("http://localhost:5000/api/auth/google", { 
+            const response = await axios.post(`${API_BASE_URL}/api/auth/google`, { 
                 token: res.credential 
             }); // verify ở server
             localStorage.setItem("token", response.data.token);

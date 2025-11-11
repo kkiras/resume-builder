@@ -14,6 +14,7 @@ import BasicsItem from "./basics/BasicsItem"
 import SkillItem from "./skills/SkillItem"
 import styles from "./styles.module.css"
 import { exportModernToPdf, printModernInBrowser } from "../../utils/exportModernToPdf";
+import API_BASE_URL from "../../utils/apiBase";
 
 export default function ResumeEditor() {    
     const navigate = useNavigate();
@@ -72,28 +73,6 @@ export default function ResumeEditor() {
         console.log('Header display type:', headerDisplayType)
     }, [headerDisplayType])
 
-    // useEffect(() => {
-    //     if (!resumeData) {
-    //         // const getResume = async () => {
-    //         //     try {
-    //         //         const res = await axios.get(`http://localhost:5000/api/resumeRoutes/get-resume`)
-    //         //         console.log('Response:', res.data.resume)
-    //         //         setResumeData(res.data.resume)
-
-    //         //     } catch (err) {
-    //         //         console.error(err)
-    //         //     }
-    //         // }
-
-    //         // getResume();
-
-    //         const storedResume = localStorage.getItem("resumeEditing");
-    //         if (storedResume)
-    //             setResumeData(JSON.parse(storedResume));
-    //     }
-
-    // }, [])
-
         //Chuyển thành dataURL để gửi đến server vì k thể gửi trực tiếp blobURL đến server
         //blobURL - file tạm thời trong trình duyệt, k lưu trữ lâu dài
     async function objectUrlToDataUrl(objectUrl) {
@@ -118,10 +97,10 @@ export default function ResumeEditor() {
 
             if (isBlob) {
                 const dataUrl = await objectUrlToDataUrl(avatarSrc)
-                const uploadRes = await axios.post('http://localhost:5000/api/resumeRoutes/upload-avatar', { image: dataUrl })
+                const uploadRes = await axios.post(`${API_BASE_URL}/api/resumeRoutes/upload-avatar`, { image: dataUrl })
                 finalAvatarUrl = uploadRes?.data?.url || ''
             } else if (isData) {
-                const uploadRes = await axios.post('http://localhost:5000/api/resumeRoutes/upload-avatar', { image: avatarSrc })
+                const uploadRes = await axios.post(`${API_BASE_URL}/api/resumeRoutes/upload-avatar`, { image: avatarSrc })
                 finalAvatarUrl = uploadRes?.data?.url || ''
             }
 
@@ -155,7 +134,7 @@ export default function ResumeEditor() {
                 ...(resumeData?._id ? {} : (userId ? { userId } : {})),
             }
 
-            const res = await axios.post('http://localhost:5000/api/resumeRoutes/save-resume', resumeToSave)
+            const res = await axios.post(`${API_BASE_URL}/api/resumeRoutes/save-resume`, resumeToSave)
             if (res?.data?.resume) {
                 setResumeData(res.data.resume)
                 localStorage.setItem("resumeEditing", JSON.stringify(res.data.resume))
@@ -181,8 +160,8 @@ export default function ResumeEditor() {
             await ensureAuthHeader()
 
             if (checked) {
-                await axios.patch(`http://localhost:5000/api/resumes/${resumeData._id}/visibility`, { visibility: 'public' })
-                const { data } = await axios.post(`http://localhost:5000/api/resumes/${resumeData._id}/share/enable`)
+                await axios.patch(`${API_BASE_URL}/api/resumes/${resumeData._id}/visibility`, { visibility: 'public' })
+                const { data } = await axios.post(`${API_BASE_URL}/api/resumes/${resumeData._id}/share/enable`)
                 const token = data?.token
                 if (token) {
                     const url = `${window.location.origin}/shared?token=${token}`
@@ -190,7 +169,7 @@ export default function ResumeEditor() {
                 }
                 setIsPublic(true)
             } else {
-                await axios.patch(`http://localhost:5000/api/resumes/${resumeData._id}/visibility`, { visibility: 'private' })
+                await axios.patch(`${API_BASE_URL}/api/resumes/${resumeData._id}/visibility`, { visibility: 'private' })
                 setIsPublic(false)
                 setShareLink('')
             }

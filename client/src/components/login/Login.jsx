@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import GoogleOneTapButton from './GoogleOneTapButton'
+import API_BASE_URL from '../../utils/apiBase'
 
 export default function Login() {
     const [state, setState] = useState('Login')
@@ -26,7 +27,7 @@ export default function Login() {
 
     const handleSignUp = async () => {
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/register', signUpInfor);
+            const res = await axios.post(`${API_BASE_URL}/api/auth/register`, signUpInfor);
             if (res?.data?.token) {
                 setToken(res.data.token);
                 localStorage.setItem('token', res.data.token);
@@ -41,7 +42,7 @@ export default function Login() {
 
     const handleLogin = async () => {
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', loginInfor);
+            const res = await axios.post(`${API_BASE_URL}/api/auth/login`, loginInfor);
             setToken(res.data.token);
             localStorage.setItem('token', res.data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
@@ -54,7 +55,7 @@ export default function Login() {
 
     const handleGuest = async () => {
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/guest');
+            const { data } = await axios.post(`${API_BASE_URL}/api/auth/guest`);
             localStorage.setItem('token', data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
             alert('Guest mode enabled');
@@ -71,7 +72,7 @@ export default function Login() {
                 alert('Vui lòng nhập email');
                 return;
             }
-            const { data } = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+            const { data } = await axios.post(`${API_BASE_URL}/api/auth/forgot-password`, { email });
             alert(data?.message || 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.');
             setState('Login');
         } catch (err) {

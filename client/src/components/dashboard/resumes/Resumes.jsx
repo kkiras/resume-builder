@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button, Checkbox, Modal, Input, RadioGroup, Radio } from "rsuite";
 import { sampleResume } from "../../../data/sampleResume"
+import API_BASE_URL from "../../../utils/apiBase"
 
 export default function Resumes(){
     const [resumes, setResumes] = useState();
@@ -22,7 +23,7 @@ export default function Resumes(){
         if (!resumes) {
             const getResumes = async () => {
                 try {
-                    const res = await axios.get(`http://localhost:5000/api/resumeRoutes/get-resumes`, {
+                    const res = await axios.get(`${API_BASE_URL}/api/resumeRoutes/get-resumes`, {
                                             headers: {
                                                 Authorization: `Bearer ${localStorage.getItem("token")}`
                                             }
@@ -43,7 +44,7 @@ export default function Resumes(){
     const handleCreate = async (name = "New Resume") => {
         try {
             const newResume = { ...sampleResume, name: name || "New Resume", createdAt: Date.now(), updatedAt: Date.now() } 
-            const res = await axios.post('http://localhost:5000/api/resumeRoutes/create-resume', newResume);
+            const res = await axios.post(`${API_BASE_URL}/api/resumeRoutes/create-resume`, newResume);
             alert('Create successfully!');
             const created = res?.data?.newResume || null;
             setResumes(prev => created ? [...(prev || []), created] : prev)
@@ -65,7 +66,7 @@ export default function Resumes(){
                 updatedAt: Date.now(),
             }
 
-            const res = await axios.post('http://localhost:5000/api/resumeRoutes/duplicate', payload);
+            const res = await axios.post(`${API_BASE_URL}/api/resumeRoutes/duplicate`, payload);
             alert(res.data.message);
             setResumes(prev => [ ...prev, res.data.newResume ])
 
@@ -78,7 +79,7 @@ export default function Resumes(){
         try {
             const ok = window.confirm(`Delete resume "${resume.name || 'Untitled'}"?`)
             if (!ok) return;
-            await axios.delete(`http://localhost:5000/api/resumeRoutes/${resume._id}`, {
+            await axios.delete(`${API_BASE_URL}/api/resumeRoutes/${resume._id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setResumes(prev => (prev || []).filter(r => r._id !== resume._id))

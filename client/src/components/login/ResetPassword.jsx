@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Input } from 'rsuite'
 import axios from 'axios'
 import styles from './styles.module.css'
+import API_BASE_URL from '../../utils/apiBase'
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams()
@@ -29,7 +30,7 @@ export default function ResetPassword() {
     }
     try {
       setLoading(true)
-      const { data } = await axios.post('http://localhost:5000/api/auth/reset-password', {
+      const { data } = await axios.post(`${API_BASE_URL}/api/auth/reset-password`, {
         uid,
         token,
         newPassword,
@@ -72,4 +73,3 @@ export default function ResetPassword() {
     </div>
   )
 }
-

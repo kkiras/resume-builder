@@ -3,6 +3,7 @@ import axios from 'axios'
 import styles from './styles.module.css'
 import { Button, Modal } from 'rsuite'
 import { useNavigate } from 'react-router-dom'
+import API_BASE_URL from '../../../utils/apiBase'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -27,7 +28,7 @@ export default function Profile() {
     }
     ;(async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/users/me')
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/me`)
         const u = data?.user || {}
         setForm({
           name: u.name || '',
@@ -84,10 +85,10 @@ export default function Profile() {
 
       if (isBlob) {
         const dataUrl = await objectUrlToDataUrl(finalAvatar)
-        const uploadRes = await axios.post('http://localhost:5000/api/users/upload-avatar', { image: dataUrl })
+        const uploadRes = await axios.post(`${API_BASE_URL}/api/users/upload-avatar`, { image: dataUrl })
         finalAvatar = uploadRes?.data?.url || ''
       } else if (isData) {
-        const uploadRes = await axios.post('http://localhost:5000/api/users/upload-avatar', { image: finalAvatar })
+        const uploadRes = await axios.post(`${API_BASE_URL}/api/users/upload-avatar`, { image: finalAvatar })
         finalAvatar = uploadRes?.data?.url || ''
       }
 
@@ -97,7 +98,7 @@ export default function Profile() {
         location: form.location || '',
         avatar: finalAvatar || '',
       }
-      const { data } = await axios.put('http://localhost:5000/api/users/me', payload)
+      const { data } = await axios.put(`${API_BASE_URL}/api/users/me`, payload)
       const u = data?.user || {}
       setForm({
         name: u.name || '',
@@ -228,7 +229,7 @@ export default function Profile() {
           <Button
             onClick={async () => {
               try {
-                await axios.delete('http://localhost:5000/api/users/me')
+                await axios.delete(`${API_BASE_URL}/api/users/me`)
                 // Clear local session
                 try {
                   localStorage.removeItem('token')

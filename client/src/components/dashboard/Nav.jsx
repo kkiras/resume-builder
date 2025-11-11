@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import styles from './nav.module.css'
 import NotificationModal from './NotificationModal'
+import API_BASE_URL from '../../utils/apiBase'
 
 export default function Nav({ onLogout }) {
   const [open, setOpen] = useState(false)
@@ -55,7 +56,7 @@ export default function Nav({ onLogout }) {
     // Fetch latest from server
     ;(async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/users/me')
+        const { data } = await axios.get(`${API_BASE_URL}/api/users/me`)
         const url = data?.user?.avatar || ''
         if (url) setAvatarUrl(url)
       } catch {}

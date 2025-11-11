@@ -360,17 +360,24 @@ export default function ResumeEditor() {
                                 
                             </div>
                             
-                            <Resume 
-                                ref={resumeRef} 
-                                headerDisplayType={headerDisplayType} 
-                                textColor={textColor}
-                                contentFontSize={contentFontSize}
-                                titleFontSize={titleFontSize}
-                                lineHeight={lineHeight}
-                                subTitleFontSize={subTitleFontSize}
-                                isBgForPageScroll={true}
-                                templateName={templateName}
-                            />
+                            <div
+                                style={{
+                                    backgroundColor: 'color-mix(in oklab, var(--muted) 30%, transparent)'
+                                }}
+                            >
+                                <Resume 
+                                    ref={resumeRef} 
+                                    headerDisplayType={headerDisplayType} 
+                                    textColor={textColor}
+                                    contentFontSize={contentFontSize}
+                                    titleFontSize={titleFontSize}
+                                    lineHeight={lineHeight}
+                                    subTitleFontSize={subTitleFontSize}
+                                    isBgForPageScroll={true}
+                                    templateName={templateName}
+                                />
+                            </div>
+
                             
                         </div>
                         

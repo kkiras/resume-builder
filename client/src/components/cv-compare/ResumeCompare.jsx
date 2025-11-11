@@ -4,7 +4,7 @@ import styles from "./ResumeCompare.module.css"
 
 export default function ResumeCompare() {
     const BG_ITEM_1 = 'var(--bg)'
-    const BG_ITEM_2 = 'var(--muted)'
+    const BG_ITEM_2 = 'color-mix(in oklab, var(--muted) 30%, transparent)'
     const navigate = useNavigate()
     const location = useLocation()
     const fromState = location?.state?.resumes || []

@@ -10,7 +10,9 @@ export default function CompareItem({ data, bgColor }) {
     const titleFontSize = stylesData.titleFontSize || '24px'
     const subTitleFontSize = stylesData.subTitleFontSize || '16px'
     const lineHeight = stylesData.lineHeight || 1.5
-    const templateName = data?.templateName || 'Classic'
+    const templateName = data.template
+
+    console.log('CompareItem:', data.template)
 
     return (
         <div 
@@ -27,13 +29,11 @@ export default function CompareItem({ data, bgColor }) {
                     titleFontSize={titleFontSize}
                     lineHeight={lineHeight}
                     subTitleFontSize={subTitleFontSize}
-                    comparePadding={'16px 0px'}
+                    comparePadding={'16px'}
                     compareMargin={0}
                     isBgForPageScroll={false}
                     pageScrollHeight={'86vh'}
-                    templateName={templateName
-
-                    }
+                    templateName={templateName}
                 />
 
                 <div

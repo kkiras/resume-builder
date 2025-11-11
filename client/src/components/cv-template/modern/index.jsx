@@ -208,7 +208,7 @@ function ModernTemplateInner(
   return (
     <div 
       style={{
-        backgroundColor: 'var(--muted)',
+        backgroundColor: 'transparent',
         padding: 24,
         overflowY: 'scroll',
         overflowX: 'hidden',

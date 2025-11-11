@@ -77,7 +77,7 @@ function MinimalistTemplateInner(
   return (
     <div 
       style={{
-        backgroundColor: 'var(--muted)',
+        backgroundColor: 'transparent',
         padding: 24,
         overflowY: 'scroll',
         overflowX: 'hidden',
@@ -87,7 +87,7 @@ function MinimalistTemplateInner(
       <div
         className={styles.pagesScroll}
         ref={(n) => setForwardedRef(ref, n)}
-                style={{
+        style={{
           "--text-color": textColor,
           "--content-font-size": contentFontSize,
           "--title-font-size": titleFontSize,
@@ -98,6 +98,7 @@ function MinimalistTemplateInner(
         {LongContent}
       </div>
     </div>
+
 
   );
 }

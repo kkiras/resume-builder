@@ -13,8 +13,8 @@ function App() {
 
   return (
     <Router>
-
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/shared" element={<SharedItem />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/reset-password" element={<ResetPassword />} /> 

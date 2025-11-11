@@ -15,6 +15,7 @@ import SkillItem from "./skills/SkillItem"
 import styles from "./styles.module.css"
 import { exportModernToPdf, printModernInBrowser } from "../../utils/exportModernToPdf";
 import API_BASE_URL from "../../utils/apiBase";
+import { createGuestResumeId, isGuestSession, upsertGuestResume } from "../../utils/session";
 
 export default function ResumeEditor() {    
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ export default function ResumeEditor() {
     const sections = useMemo(() => (
         resumeData?.sections?.map(s => ({ id: s.id, title: s.title })) ?? []
     ), [resumeData]);
+    const isGuest = useMemo(() => isGuestSession(), [])
 
     const [ textColor, setTextColor ] = useState('#313131');
     const [ contentFontSize, setContentFontSize ] = useState('14px');
@@ -88,7 +90,9 @@ export default function ResumeEditor() {
 
     const handleSave = async () => {
         try {
-            await ensureAuthHeader()
+            if (!isGuest) {
+                await ensureAuthHeader()
+            }
             let avatarSrc = resumeData?.basics?.avatar || ''
             let finalAvatarUrl = avatarSrc
 
@@ -134,6 +138,16 @@ export default function ResumeEditor() {
                 ...(resumeData?._id ? {} : (userId ? { userId } : {})),
             }
 
+            if (isGuest) {
+                const saved = upsertGuestResume(resumeToSave._id ? resumeToSave : { ...resumeToSave, _id: resumeData?._id || createGuestResumeId() });
+                if (saved) {
+                    setResumeData(saved)
+                    localStorage.setItem("resumeEditing", JSON.stringify(saved))
+                }
+                alert('Saved locally in guest mode.')
+                return;
+            }
+
             const res = await axios.post(`${API_BASE_URL}/api/resumeRoutes/save-resume`, resumeToSave)
             if (res?.data?.resume) {
                 setResumeData(res.data.resume)
@@ -153,6 +167,10 @@ export default function ResumeEditor() {
 
     async function handleToggleShare(checked) {
         try {
+            if (isGuest) {
+                alert('Vui lòng đăng ký để chia sẻ resume.');
+                return;
+            }
             if (!resumeData?._id) {
                 alert('Please save resume before sharing');
                 return;

@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import styles from './styles.module.css'
 import { Button, Modal } from 'rsuite'
 import { useNavigate } from 'react-router-dom'
 import API_BASE_URL from '../../../utils/apiBase'
+import { isGuestSession } from '../../../utils/session'
 
 export default function Profile() {
   const navigate = useNavigate()
+  const isGuest = useMemo(() => isGuestSession(), [])
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -22,6 +24,11 @@ export default function Profile() {
   const handleClose = () => setOpen(false)
 
   useEffect(() => {
+    if (isGuest) {
+      setLoading(false)
+      setIsGoogle(false)
+      return
+    }
     const token = localStorage.getItem('token')
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -46,7 +53,7 @@ export default function Profile() {
         setLoading(false)
       }
     })()
-  }, [])
+  }, [isGuest])
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -54,7 +61,7 @@ export default function Profile() {
   }
 
   function triggerAvatarSelect() {
-    if (isGoogle) return
+    if (isGoogle || isGuest) return
     fileInputRef.current?.click()
   }
 
@@ -78,6 +85,10 @@ export default function Profile() {
 
   async function handleSave(e) {
     e?.preventDefault?.()
+    if (isGuest) {
+      alert('Guest mode cannot update profile.')
+      return
+    }
     try {
       let finalAvatar = form.avatar || ''
       const isBlob = typeof finalAvatar === 'string' && finalAvatar.startsWith('blob:')
@@ -134,7 +145,7 @@ export default function Profile() {
         <h2 className={styles.title}>Personal Information</h2>
         <p className={styles.subtitle}>Update your personal details and contact information</p>
         <div>
-          <Button color="red" appearance="primary" onClick={handleOpen}>
+          <Button color="red" appearance="primary" onClick={handleOpen} disabled={isGuest}>
             Delete My Account & Data
           </Button>
         </div>
@@ -151,8 +162,8 @@ export default function Profile() {
             <div className={styles.avatar} aria-label="profile photo placeholder" />
           )}
           <div className={styles.avatarActions}>
-            <button className={styles.photoBtn} type="button" onClick={triggerAvatarSelect} disabled={isGoogle}>
-              {isGoogle ? 'Managed by Google' : 'Change Photo'}
+            <button className={styles.photoBtn} type="button" onClick={triggerAvatarSelect} disabled={isGoogle || isGuest}>
+              {isGoogle ? 'Managed by Google' : isGuest ? 'Guest mode' : 'Change Photo'}
             </button>
             <div className={styles.photoHint}>JPG, PNG or GIF. Max size 2MB.</div>
             <input
@@ -214,13 +225,13 @@ export default function Profile() {
           </div>
 
           <div className={styles.actions}>
-            <button type="submit" className={styles.saveBtn}>Save Changes</button>
+            <button type="submit" className={styles.saveBtn} disabled={isGuest}>Save Changes</button>
             <button type="button" className={styles.cancelBtn} onClick={() => window.location.reload()}>Cancel</button>
           </div>
         </form>
       </div>
 
-      <Modal backdrop="static" role="alertdialog" open={open} onClose={handleClose} size="xs">
+      <Modal backdrop="static" role="alertdialog" open={open && !isGuest} onClose={handleClose} size="xs">
         <Modal.Body>
           {/* Icon intentionally omitted to avoid extra dependency */}
           This will permanently delete your account and all resumes. This action cannot be undone. Are you sure you want to proceed?

@@ -5,9 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { Button, Checkbox, Modal, Input, RadioGroup, Radio } from "rsuite";
 import { sampleResume } from "../../../data/sampleResume"
 import API_BASE_URL from "../../../utils/apiBase"
+import { createGuestResumeId, isGuestSession, loadGuestResumes, saveGuestResumes } from "../../../utils/session"
 
 export default function Resumes(){
-    const [resumes, setResumes] = useState();
+    const [guestSession] = useState(() => isGuestSession())
+    const [resumes, setResumes] = useState(() => guestSession ? loadGuestResumes() : undefined);
     const [compareMode, setCompareMode] = useState(false)
     const [selectedIds, setSelectedIds] = useState([])
     const [createOpen, setCreateOpen] = useState(false)
@@ -20,29 +22,47 @@ export default function Resumes(){
     }, [])
 
     useEffect(()=> {
-        if (!resumes) {
-            const getResumes = async () => {
-                try {
-                    const res = await axios.get(`${API_BASE_URL}/api/resumeRoutes/get-resumes`, {
-                                            headers: {
-                                                Authorization: `Bearer ${localStorage.getItem("token")}`
-                                            }
-                                        });
-                    console.log('Resumes:', res.data.resumes);
-                    setResumes(res.data.resumes);
+        if (guestSession || resumes) return;
+        const getResumes = async () => {
+            try {
+                const res = await axios.get(`${API_BASE_URL}/api/resumeRoutes/get-resumes`, {
+                                        headers: {
+                                            Authorization: `Bearer ${localStorage.getItem("token")}`
+                                        }
+                                    });
+                console.log('Resumes:', res.data.resumes);
+                setResumes(res.data.resumes);
 
-                } catch (err) {
-                    console.log(err);
-                }
-            } 
-            
-            getResumes();
-        }
+            } catch (err) {
+                console.log(err);
+            }
+        } 
+        
+        getResumes();
+    },[guestSession, resumes])
 
-    },[])
+    useEffect(() => {
+        if (!guestSession) return;
+        saveGuestResumes(resumes || []);
+    }, [guestSession, resumes])
 
     const handleCreate = async (name = "New Resume") => {
         try {
+            if (guestSession) {
+                const localResume = { 
+                    ...sampleResume, 
+                    _id: createGuestResumeId(),
+                    name: name || "New Resume", 
+                    createdAt: Date.now(), 
+                    updatedAt: Date.now() 
+                };
+                setResumes(prev => ([...(prev || []), localResume]));
+                alert('Created locally in guest mode.');
+                setCreateOpen(false)
+                setNewName("")
+                setTemplate("classic")
+                return;
+            }
             const newResume = { ...sampleResume, name: name || "New Resume", createdAt: Date.now(), updatedAt: Date.now() } 
             const res = await axios.post(`${API_BASE_URL}/api/resumeRoutes/create-resume`, newResume);
             alert('Create successfully!');
@@ -59,6 +79,18 @@ export default function Resumes(){
 
     const duplicate = async (coppiedResume) => {
         try {
+            if (guestSession) {
+                const payload = {
+                    ...coppiedResume,
+                    _id: createGuestResumeId(),
+                    name: (coppiedResume.name || 'Untitled') + '_copy',
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
+                }
+                setResumes(prev => ([...(prev || []), payload]));
+                alert('Duplicated locally in guest mode.');
+                return;
+            }
             const payload = {
                 ...coppiedResume,
                 name: (coppiedResume.name || 'Untitled') + '_copy',
@@ -79,6 +111,10 @@ export default function Resumes(){
         try {
             const ok = window.confirm(`Delete resume "${resume.name || 'Untitled'}"?`)
             if (!ok) return;
+            if (guestSession) {
+                setResumes(prev => (prev || []).filter(r => r._id !== resume._id));
+                return;
+            }
             await axios.delete(`${API_BASE_URL}/api/resumeRoutes/${resume._id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
@@ -124,7 +160,8 @@ export default function Resumes(){
                     <Button 
                         appearance="primary"
                         onClick={() => {
-                            const selected = resumes.filter(r => selectedIds.includes(r._id)).slice(0, 2)
+                            if (!resumes) return;
+                            const selected = (resumes || []).filter(r => selectedIds.includes(r._id)).slice(0, 2)
                             localStorage.setItem('compareSelection', JSON.stringify(selected))
                             navigate('/dashboard/compare', { state: { resumes: selected } })
                         }}

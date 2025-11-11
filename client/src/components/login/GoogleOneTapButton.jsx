@@ -5,6 +5,7 @@ import axios from "axios";
 import { Button } from "rsuite";
 import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from "../../utils/apiBase";
+import { disableGuestSession } from "../../utils/session";
 
 export default function GoogleOneTapButton() {
   const initialized = useRef(false);
@@ -27,6 +28,7 @@ export default function GoogleOneTapButton() {
             localStorage.setItem("user", JSON.stringify(response.data.user));
             // Set default Authorization header for subsequent requests
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+            disableGuestSession();
             console.log("Login OK:", payload);
             // Navigate similar to Login.jsx
             navigate('/dashboard/resumes');

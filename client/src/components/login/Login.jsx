@@ -4,9 +4,9 @@ import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
 import GoogleOneTapButton from './GoogleOneTapButton'
 import API_BASE_URL from '../../utils/apiBase'
+import { enableGuestSession, disableGuestSession } from '../../utils/session'
 
 export default function Login() {
     const [state, setState] = useState('Login')
@@ -33,6 +33,7 @@ export default function Login() {
                 localStorage.setItem('token', res.data.token);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
             }
+            disableGuestSession();
             alert(res?.data?.message || 'User registered successfully');
             navigate('/dashboard/resumes')
         } catch (err) {
@@ -46,6 +47,7 @@ export default function Login() {
             setToken(res.data.token);
             localStorage.setItem('token', res.data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+            disableGuestSession();
             alert('Login success')
             navigate('/dashboard/resumes')
         } catch (err) {
@@ -58,6 +60,8 @@ export default function Login() {
             const { data } = await axios.post(`${API_BASE_URL}/api/auth/guest`);
             localStorage.setItem('token', data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+            enableGuestSession();
+            localStorage.setItem('user', JSON.stringify({ name: 'Guest Mode', email: 'guest@example.com', avatar: '' }));
             alert('Guest mode enabled');
             navigate('/dashboard/resumes');
         } catch (err) {

@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import styles from './nav.module.css'
 import NotificationModal from './NotificationModal'
 import API_BASE_URL from '../../utils/apiBase'
+import { isGuestSession } from '../../utils/session'
 
 export default function Nav({ onLogout }) {
   const [open, setOpen] = useState(false)
@@ -41,6 +42,7 @@ export default function Nav({ onLogout }) {
   }, [notifOpen, selected])
 
   const [avatarUrl, setAvatarUrl] = useState('')
+  const isGuest = useMemo(() => isGuestSession(), [])
 
   useEffect(() => {
     // Ensure axios has auth header if token exists
@@ -53,14 +55,15 @@ export default function Nav({ onLogout }) {
       if (cached?.avatar) setAvatarUrl(cached.avatar)
     } catch {}
 
-    // Fetch latest from server
-    ;(async () => {
-      try {
-        const { data } = await axios.get(`${API_BASE_URL}/api/users/me`)
-        const url = data?.user?.avatar || ''
-        if (url) setAvatarUrl(url)
-      } catch {}
-    })()
+    if (!isGuest) {
+      ;(async () => {
+        try {
+          const { data } = await axios.get(`${API_BASE_URL}/api/users/me`)
+          const url = data?.user?.avatar || ''
+          if (url) setAvatarUrl(url)
+        } catch {}
+      })()
+    }
     // Listen for profile updates broadcast from Profile.jsx
     function onUserUpdated(e) {
       const next = e?.detail?.avatar || ''
@@ -68,7 +71,7 @@ export default function Nav({ onLogout }) {
     }
     window.addEventListener('user:updated', onUserUpdated)
     return () => window.removeEventListener('user:updated', onUserUpdated)
-  }, [])
+  }, [isGuest])
 
   return (
     <div className={styles.topbar}>

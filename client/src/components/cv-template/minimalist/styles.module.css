@@ -1,6 +1,31 @@
 /* Stub CSS module for Minimalist template. You can customize later. */
-.pagesScroll {}
-.pages {}
-.page {}
+.pagesScroll {
+        display: grid;
+    place-items: start center;
+    min-height: 0; /* allow inner scroll inside CSS grid */
+
+    margin-top: 0vh; 
+}
+.pages {
+        width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10mm;
+}
+.page {
+        width: 210mm;
+    min-height: 297mm;
+    /* padding: 12mm; */
+    box-sizing: border-box;
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    color: var(--text-color);
+    overflow: hidden;
+
+    /* Typography driven by inline CSS variables from Resume.jsx */
+    font-size: var(--content-font-size, 12px);
+    line-height: var(--line-height, 1.5);
+}
 .block {}
 

@@ -10,6 +10,7 @@ export default function CompareItem({ data, bgColor }) {
     const titleFontSize = stylesData.titleFontSize || '24px'
     const subTitleFontSize = stylesData.subTitleFontSize || '16px'
     const lineHeight = stylesData.lineHeight || 1.5
+    const templateName = data?.templateName || 'Classic'
 
     return (
         <div 
@@ -30,6 +31,9 @@ export default function CompareItem({ data, bgColor }) {
                     compareMargin={0}
                     isBgForPageScroll={false}
                     pageScrollHeight={'86vh'}
+                    templateName={templateName
+
+                    }
                 />
 
                 <div

@@ -1,0 +1,23 @@
+.title {
+    font-size: var(--title-font-size, 26px) !important;
+
+    
+}
+
+.sectionLine {
+    width: 100%;
+    margin: auto;
+    height: 1px;
+    background-color: var(--text-color);
+}
+
+.itemDetailContent{
+    margin-top: 8px;
+    margin-bottom: 24px;
+    font-size: var(--content-font-size);
+    line-height: var(--line-height, 1.5);
+}
+
+.itemDetailContent > li{
+    margin-top: 4px;
+}

@@ -237,6 +237,7 @@ export default function Resumes(){
                                 </Radio>
                                 <Radio value="Minimalist" className={styles.option} >
                                     <div className={styles.absoluteOption} >
+                                        <img src="/minimalist_sample.png" alt="" />
                                         <span>Minimalist</span>
                                     </div>
                                     

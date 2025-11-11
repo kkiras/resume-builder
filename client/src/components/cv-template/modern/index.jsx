@@ -166,7 +166,9 @@ function ModernTemplateInner(
   // Nội dung “div dài” như trước đây
   const LongContent = (
     // <div className={styles.page}>
-    <div>
+    <div
+
+    >
       <div className={styles.layout}>
         <div id="cv-left" className={styles.leftSide}>
           {resume?.basics && (

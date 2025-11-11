@@ -14,7 +14,7 @@ app.use('/api/resumeRoutes', require('./routes/resumeRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api', require('./routes/share'));
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {dbName: process.env.MONGO_DB_NAME})
     .then(() => {
         console.log('MongoDB Connected');
         app.listen(process.env.PORT, () => {

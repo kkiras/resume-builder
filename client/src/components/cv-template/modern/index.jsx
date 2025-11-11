@@ -204,13 +204,23 @@ function ModernTemplateInner(
   );
 
   return (
-    <div
-      className={styles.pagesScroll}
-      style={{ height: "92vh", marginTop: "8vh", backgroundColor: "var(--muted)" }}
-      ref={(n) => setForwardedRef(ref, n)}
+    <div 
+      style={{
+        backgroundColor: 'var(--muted)',
+        padding: 24,
+        overflowY: 'scroll',
+        overflowX: 'hidden',
+        height: '92vh',
+      }}
     >
-      <PagedPreview cssVars={pagesStyleVars}>{LongContent}</PagedPreview>
+      <div
+        className={styles.pagesScroll}
+        ref={(n) => setForwardedRef(ref, n)}
+      >
+        {LongContent}
+      </div>
     </div>
+
   );
 }
 

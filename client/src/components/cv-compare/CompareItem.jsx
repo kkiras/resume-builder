@@ -4,7 +4,7 @@ import CVContext from "../cv-edit/CVContext"
 
 export default function CompareItem({ data, bgColor }) {
     const stylesData = data?.styles || {}
-    const headerDisplayType = 'left'
+    const headerDisplayType = styles.headerDisplayType || 'left'
     const textColor = stylesData.textColor || '#313131'
     const contentFontSize = stylesData.contentFontSize || '14px'
     const titleFontSize = stylesData.titleFontSize || '24px'

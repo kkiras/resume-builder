@@ -1,10 +1,11 @@
 /* Stub CSS module for Modern template. You can customize later. */
 .pagesScroll {
-    overflow-y: scroll;
-    overflow-x: hidden;
     display: grid;
     place-items: start center;
     min-height: 0; /* allow inner scroll inside CSS grid */
+
+    margin-top: 0vh; 
+
 }
 
 /* .pagesScroll::-webkit-scrollbar {
@@ -45,6 +46,10 @@
     /* page-break-inside: avoid; */
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 @media print {
   .pagesScroll {
     overflow: visible;
@@ -69,11 +74,14 @@
   width: 74mm;
   /* height: 100%; */
   padding: 10mm;
-  background-color: gray;
+  background-color: rgb(33, 53, 100);
+  color: rgb(210, 210, 210);
 }
 
 .rightSide {
   flex: 1;
+  background-color: white;
+  padding: 16px;
 }
 
 .cutOverlay {

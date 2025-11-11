@@ -81,7 +81,8 @@ export default function PagedPreview({ children, cssVars, showSource = false }) 
       <div
         ref={sourceRef}
         className="paged-content"
-        style={{ display: showSource ? "block" : "none", ...(cssVars || {}) }}
+        // style={{ display: showSource ? "block" : "none", ...(cssVars || {}) }}
+        style={{ display: "block", ...(cssVars || {}) }}
         aria-hidden={!showSource}
       >
         {children}

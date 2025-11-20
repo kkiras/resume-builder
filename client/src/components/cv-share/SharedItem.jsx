@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import styles from "./SharedItem.module.css"
 import Resume from "../cv-edit/resume/Resume"
 import CVContext from "../cv-edit/CVContext"
@@ -8,7 +8,6 @@ import API_BASE_URL from "../../utils/apiBase"
 
 export default function SharedItem({ }) {
     const BG_ITEM_1 = 'var(--bg)'
-    const navigate = useNavigate()
 
     const [resumeData, setResumeData] = useState();
     const [loading, setLoading] = useState(true);

@@ -49,6 +49,7 @@ export default function ResumeEditor() {
     const [shareOpen, setShareOpen] = useState(false)
     const [isPublic, setIsPublic] = useState(false)
     const [shareLink, setShareLink] = useState('')
+    const [isTranslating, setIsTranslating] = useState(false)
 
     // const skills = resumeData?.sections.find(section => section.id === 'skills').items
 
@@ -214,6 +215,25 @@ export default function ResumeEditor() {
         }
     }
 
+    async function handleTranslateToEnglish() {
+        try {
+            setIsTranslating(true)
+            const { data } = await axios.post(`${API_BASE_URL}/api/llm/translate`, {
+                resume: resumeData,
+                targetLang: 'Vietnamese',
+            })
+            if (data?.resume) {
+                setResumeData(data.resume)
+                localStorage.setItem("resumeEditing", JSON.stringify(data.resume))
+            }
+        } catch (err) {
+            const msg = err?.response?.data?.detail || err?.response?.data?.message || err.message
+            alert(msg || 'Translate failed')
+        } finally {
+            setIsTranslating(false)
+        }
+    }
+
     const handlePrint =  () => {
         exportElementToPdf(resumeRef.current, {
             fileName: "test-demo.pdf",
@@ -268,6 +288,9 @@ export default function ResumeEditor() {
                             <Button onClick={handleSave}>Save</Button>
                             <Button onClick={handlePrint}>Print</Button>
                             <Button onClick={() => setShareOpen(v => !v)}>Share CV</Button>
+                            <Button loading={isTranslating} disabled={isTranslating} onClick={handleTranslateToEnglish}>
+                                {isTranslating ? "Translating..." : "Translate to English"}
+                            </Button>
 
                             {shareOpen && (
                                 <div style={{ position: 'absolute', top: '110%', right: 0, background: '#fff', border: '1px solid var(--border)', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', padding: 12, minWidth: 300, zIndex: 20 }}>
